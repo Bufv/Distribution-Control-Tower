@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import SellInSellOutChart from './components/SellInSellOutChart'
 import StockHealthCards from './components/StockHealthCards'
 import RegionalTable from './components/RegionalTable'
+import MITLCards from './components/MITLCards'
+import PromoForm from './components/PromoForm'
 
 function App() {
   const [backendStatus, setBackendStatus] = useState('checking...')
+  const [showPromoForm, setShowPromoForm] = useState(false)
 
   useEffect(() => {
     fetch('/api/health')
@@ -24,8 +27,16 @@ function App() {
           <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">MITL Action Center</a>
           <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">Regional Reports</a>
         </nav>
-        <div className="mt-auto pt-4 border-t border-gray-700 text-xs text-gray-400">
-          Backend: <span className="font-mono">{backendStatus}</span>
+        <div className="mt-auto pt-4 border-t border-gray-700 text-xs text-gray-400 space-y-2">
+          <button
+            onClick={() => setShowPromoForm(true)}
+            className="block w-full text-left px-3 py-2 rounded hover:bg-gray-700 text-gray-300 hover:text-white"
+          >
+            Promo Calendar
+          </button>
+          <div>
+            Backend: <span className="font-mono">{backendStatus}</span>
+          </div>
         </div>
       </aside>
 
@@ -60,12 +71,12 @@ function App() {
         <h3 className="font-semibold text-sm uppercase tracking-wide text-gray-500 mb-4">
           Tactic Panel
         </h3>
-        <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center text-gray-400 text-sm flex-1 flex items-center justify-center">
-          Rekomendasi MITL akan muncul di sini
-          <br />
-          <span className="text-xs mt-1">(Fase 3 — Epic 2)</span>
+        <div className="flex-1 overflow-y-auto">
+          <MITLCards />
         </div>
       </aside>
+
+      {showPromoForm && <PromoForm onClose={() => setShowPromoForm(false)} />}
     </div>
   )
 }
