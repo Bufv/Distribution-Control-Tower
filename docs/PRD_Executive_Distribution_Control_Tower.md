@@ -16,6 +16,7 @@
 | 2026-06-19 | — | Dokumen inisial | — |
 | 2026-06-19 | opencode | Fase 1: inisiasi proyek, schema DB (8 tabel), data generator, 3 skenario dummy, Docker Compose | Eksekusi MVP tahap infrastruktur |
 | 2026-06-20 | opencode | Fase 2: backend API layer (sales, inventory, distributors, regions) + DOI logic + frontend dashboard (grafik, stock health, regional table) | Eksekusi Epic 1 Executive Dashboard |
+| 2026-06-20 | opencode | Story 2.1: backend API recommendations + promo calendar + MITL card component + promo form (AC 2.1.1, 2.1.2, 2.1.3) | Eksekusi Epic 2 MITL Engine — tahap rekomendasi + promo check |
 
 ---
 
