@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import distributors, sales, inventory, regions
+from app.routers import distributors, sales, inventory, regions, recommendations, promos
 
 app = FastAPI(
     title="Executive Distribution Control Tower",
@@ -21,6 +21,8 @@ app.include_router(distributors.router)
 app.include_router(sales.router)
 app.include_router(inventory.router)
 app.include_router(regions.router)
+app.include_router(recommendations.router)
+app.include_router(promos.router)
 
 
 @app.get("/health")
