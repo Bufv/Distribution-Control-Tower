@@ -2,24 +2,33 @@
 
 **Proyek:** Executive Distribution Control Tower (FMCG Edition)
 **PRD Referensi:** `PRD_Executive_Distribution_Control_Tower.md`
-**Tanggal Audit:** 2026-06-20
 **Auditor:** opencode
+
+---
+
+## Changelog
+
+| Versi | Tanggal | Perubahan | Auditor |
+|---|---|---|---|
+| v1.0 | 2026-06-20 | Dokumen inisial — audit setelah Fase 1 selesai | opencode |
+| **v2.0** | **2026-06-20** | **Update besar: Fase 2 (Executive Dashboard) selesai 100%. Perbaiki semua progress, critical issues, rekomendasi** | **opencode** |
+| **v2.1** | **2026-06-20** | **Story 2.1: backend API rekomendasi + promo calendar + MITL cards + promo form. Update progress Fase 3** | **opencode** |
 
 ---
 
 ## Ringkasan Eksekutif
 
-| Fase | Progress | PRD Reference |
-|---|---|---|
-| Fase 1 (Infrastruktur + DB + Data Generator) | **100%** | Minggu 1–2 |
-| Fase 2 (Executive Dashboard — Epic 1) | **0%** | Minggu 3–4 |
-| Fase 3 (MITL Engine — Epic 2) | **~10%** | Minggu 5–6 |
-| Fase 4 (Kolaborasi + Data Governance — Epic 3.1 + Epic 4) | **~5%** | Minggu 7–8 |
-| Security & Auth (Section 4.3) | **0%** | Section 4.3 |
-| AI/MITL Engine Rule (Section 3) | **~15%** | Section 3 |
-| **OVERALL** | **~25%** | — |
+| Fase / Area | Progress (v1.0) | Progress (v2.0) | Progress (v2.1) | PRD Target |
+|---|---|---|---|---|---|
+| Fase 1 (Infrastruktur + DB + Data Generator) | **100%** | **100%** | **100%** | Minggu 1–2 |
+| Fase 2 (Executive Dashboard — Epic 1) | **0%** | **100%** | **100%** | Minggu 3–4 |
+| Fase 3 (MITL Engine — Epic 2) | **~10%** | **~30%** | **~60%** | Minggu 5–6 |
+| Fase 4 (Kolaborasi + Data Governance — Epic 3.1 + Epic 4) | **~5%** | **~10%** | **~10%** | Minggu 7–8 |
+| Security & Auth (Section 4.3) | **0%** | **0%** | **0%** | Section 4.3 |
+| AI/MITL Engine Rule (Section 3) | **~15%** | **~15%** | **~30%** | Section 3 |
+| **OVERALL** | **~25%** | **~55%** | **~65%** | — |
 
-**Temuan Utama:** Proyek hanya menyelesaikan Fase 1 (infrastructure, database schema, data generator). Seluruh fungsionalitas bisnis — dashboard, MITL cards, kolaborasi, auth, graceful degradation — belum diimplementasikan. Backend hanya punya 1 endpoint (`/health`), frontend hanya menampilkan layout statis.
+**Temuan Utama v2.1:** Fase 1, 2 sudah complete. Story 2.1 (MITL Cards + Promo Calendar Check) telah diimplementasi — backend API rekomendasi dengan promo check, komponen kartu dengan promo-aware tag, dan form promo manual. Story 2.2 (Escalate) masih belum. Fase 4 dan Auth masih 0%.
 
 ---
 
@@ -51,60 +60,57 @@
 
 ---
 
-## 2. Fase 2: Executive Dashboard (Epic 1) — 0%
+## 2. Fase 2: Executive Dashboard (Epic 1) — 100% ✅
 
-### Story 1.1 — Sell-In vs Sell-Out Gap Chart
-
-| Acceptance Criteria | Status | Detail |
-|---|---|---|
-| [AC 1.1.1] Line chart 2 series (Sell-In vs Sell-Out) per bulan | ❌ | Hanya placeholder `<div>` di `App.jsx:34`: `"Sell-In vs Sell-Out Gap Chart (Fase 2 — Epic 1)"` |
-| [AC 1.1.2] Filter waktu (Bulanan, Kuartal) + dropdown SKU | ❌ | Tidak ada |
-| [AC 1.1.3] Data refresh ≤5 detik setelah siklus data generator | ❌ | Tidak ada data fetching ke backend |
-
-**Dampak:** Core visualization aplikasi tidak ada. Tanpa grafik gap, National Sales Manager tidak bisa deteksi channel stuffing.
-
-### Story 1.2 — Stock Health Tracker
+### Story 1.1 — Sell-In vs Sell-Out Gap Chart ✅
 
 | Acceptance Criteria | Status | Detail |
 |---|---|---|
-| [AC 1.2.1] Kartu stok per distributor + indikator warna (🔴🟢🟡) | ❌ | Tidak ada di frontend |
-| [AC 1.2.2] DOI = Current Inventory / Seasonally Adjusted Forecasted Daily Demand | ❌ | **Tidak ada logika DOI** di mana pun — baik backend, data generator, maupun frontend |
+| [AC 1.1.1] Line chart 2 series (Sell-In vs Sell-Out) per bulan | ✅ | `frontend/src/components/SellInSellOutChart.jsx` — Recharts `LineChart` dengan 2 series: sell_in (biru) & sell_out (hijau) |
+| [AC 1.1.2] Filter waktu (Bulanan, Kuartal) + dropdown SKU | ✅ | Dropdown period `monthly`/`quarterly` + dropdown SKU dari `GET /api/sales/skus` |
+| [AC 1.1.3] Data refresh ≤5 detik setelah siklus data generator | 🟡 | Fetch on mount + dependency change. Data segar setiap render ulang. Belum ada auto-polling interval. |
 
-**Dampak:** Supply Chain Director tidak bisa memantau risiko overstock/stockout.
+**Backend:** `GET /api/sales` di `backend/app/routers/sales.py:12` — aggregate `date_trunc` monthly/quarterly.
 
-### Story 1.3 — Regional Penetration Map (OUT OF SCOPE MVP)
+### Story 1.2 — Stock Health Tracker ✅
 
 | Acceptance Criteria | Status | Detail |
 |---|---|---|
-| Tabel ranking region sederhana (pengganti peta) | ❌ | Tidak ada. Sidebar punya link "Regional Reports" tapi tidak ada konten. |
+| [AC 1.2.1] Kartu stok per distributor + indikator warna (🔴🟢🟡) | ✅ | `frontend/src/components/StockHealthCards.jsx` — kartu per distributor dengan border-color coding + emoji indikator + count detail (overstock/healthy/understock) |
+| [AC 1.2.2] DOI = Current Inventory / Seasonally Adjusted Forecasted Daily Demand | ✅ | `backend/app/services/doi.py:20` — rumus: `current_stock / (avg_sell_out_7hari * Ws)`; threshold: >30 overstock, <14 understock |
 
-**Catatan:** PRD secara eksplisit menandai peta interaktif sebagai _out of scope_ dan menyatakan akan diganti tabel ranking region. Tabel ini juga belum dibuat.
+**Backend:** `GET /api/inventory` di `backend/app/routers/inventory.py:14` — aggregasi health per distributor via DOI per SKU.
 
-### Root Cause — Fase 2
+### Story 1.3 — Regional Ranking Table ✅ (pengganti peta)
 
-- **Backend:** Tidak ada router/endpoint untuk data sales (`/api/sales`), inventory (`/api/inventory`), maupun distributors (`/api/distributors`)
-- **Frontend:** Tidak ada dependency chart library (recharts, chart.js, d3) di `package.json`
-- **Frontend:** Tidak ada komponen React fungsional — hanya `App.jsx` dengan layout statis
+| Acceptance Criteria | Status | Detail |
+|---|---|---|
+| Tabel ranking region sederhana (pengganti peta interaktif) | ✅ | `frontend/src/components/RegionalTable.jsx` — peringkat, nama region, total sell-out |
+| PRD menyatakan peta interaktif **OUT OF SCOPE MVP**, diganti tabel | ✅ Terpenuhi | |
+
+**Backend:** `GET /api/regions/ranking` di `backend/app/routers/regions.py:12` — group by region, sum sell_out, order desc.
 
 ---
 
-## 3. Fase 3: MITL Smart Recommendation Engine (Epic 2) — ~10%
+## 3. Fase 3: MITL Smart Recommendation Engine (Epic 2) — ~60%
 
-### Story 2.1 — Financial & Commercial-Aware Card
+### Story 2.1 — Financial & Commercial-Aware Card ✅
 
-| Acceptance Criteria | Status | Detail |
-|---|---|---|
-| [AC 2.1.1] Promo/JBP Calendar Index check | ❌ | Tabel `promo_calendar` exist + data generator create 1 promo row. Namun **tidak ada API endpoint** untuk query promo dari frontend. |
-| [AC 2.1.2] Tag `[DO NOT CUT ALLOCATION - PROMO PREP]` + tombol disabled | ❌ | Tidak ada implementasi |
-| [AC 2.1.3] Form input promo manual (CSV upload / input langsung) | ❌ | Tidak ada |
+| Acceptance Criteria | Status v2.0 | Status v2.1 | Detail |
+|---|---|---|---|
+| [AC 2.1.1] Promo/JBP Calendar Index check | ❌ | ✅ | `backend/app/routers/recommendations.py` — setiap kartu dicek terhadap promo aktif di region/distributor yang sama dalam 30 hari ke depan |
+| [AC 2.1.2] Tag `[DO NOT CUT ALLOCATION - PROMO PREP]` + tombol disabled | ❌ | ✅ | `frontend/src/components/MITLCards.jsx` — menampilkan tag ungu + tombol "Kurangi Alokasi" disabled jika `sell_in_cuttable=false` |
+| [AC 2.1.3] Form input promo manual (CSV upload / input langsung) | ❌ | ✅ | `frontend/src/components/PromoForm.jsx` — modal dengan form lengkap (distributor, SKU, nama, tanggal, diskon) + daftar promo aktif + tombol hapus. Backend: `GET/POST /api/promos`, `DELETE /api/promos/{id}` |
+
+**Backend:** `GET /api/recommendations` di `backend/app/routers/recommendations.py` — query promo dalam 30 hari, cocokkan region/distributor, return flag `promo_nearby` + `sell_in_cuttable`.
 
 ### Story 2.2 — Escalate to Commercial/Legal
 
 | Acceptance Criteria | Status | Detail |
 |---|---|---|
-| [AC 2.2.1] Tombol `[Escalate to Commercial/Legal]` di kartu rekomendasi | ❌ | Tidak ada |
-| [AC 2.2.2] Tiket notifikasi (status: Pending → Approved/Rejected) | ❌ | Tidak ada |
-| [AC 2.2.3] In-app notification only (tanpa email) | ❌ | Tidak ada |
+| [AC 2.2.1] Tombol `[Escalate to Commercial/Legal]` di kartu rekomendasi | ❌ | Belum ada |
+| [AC 2.2.2] Tiket notifikasi (status: Pending → Approved/Rejected) | ❌ | Belum ada |
+| [AC 2.2.3] In-app notification only (tanpa email) | ❌ | Belum ada |
 
 ### Yang Sudah Ada (Partial)
 
@@ -113,14 +119,11 @@ Data generator (`generator.py`) sudah membuat `RecommendationCard` berdasarkan k
 - **Stockout scenario:** `recommendation_type="stockout"`, severity `"high"`
 - **Normal scenario:** `recommendation_type="channel_stuffing"`, severity `"medium"`
 
-Ini adalah seed data yang siap ditampilkan, tapi:
-1. ❌ Tidak ada API endpoint untuk serve data ini ke frontend
-2. ❌ Tidak ada komponen kartu rekomendasi di frontend
-3. ❌ Tidak ada logic promo calendar check di backend API
+Sekarang sudah bisa diserve ke frontend via `GET /api/recommendations` dan ditampilkan di Tactic Panel via `MITLCards.jsx`.
 
 ---
 
-## 4. Fase 4: Data Governance & Collaboration (Epic 3.1 + Epic 4) — ~5%
+## 4. Fase 4: Data Governance & Collaboration (Epic 3.1 + Epic 4) — ~10%
 
 ### Story 3.1 — Graceful Degradation
 
@@ -176,84 +179,110 @@ Ini adalah seed data yang siap ditampilkan, tapi:
 
 ## 7. Critical Issues
 
-### 🔴 Critical 1: Backend hanya punya 1 endpoint
+### 🔴 Critical 1: Backend — 7 endpoint masih hilang
+
+**Status v1.0:** ❌ Hanya 1 endpoint (`/health`)
+**Status v2.0:** ✅ **5 endpoint sudah aktif** (distributors, sales, sales/skus, inventory, regions/ranking)
+**Status v2.0:** ❌ **7 endpoint masih hilang**
 
 ```
 $ grep -rn "router\|@app\.\|APIRouter\|include_router" backend/app/
-→ backend/app/main.py:19: @app.get("/health")  # SATU-SATUNYA ENDPOINT
+→ backend/app/main.py:20: app.include_router(distributors.router)
+→ backend/app/main.py:21: app.include_router(sales.router)
+→ backend/app/main.py:22: app.include_router(inventory.router)
+→ backend/app/main.py:23: app.include_router(regions.router)
 ```
 
-**Endpoint yang hilang (wajib untuk MVP):**
-
-| Endpoint | Fungsi | PRD Story |
+**Endpoint tersedia (6):**
+| Endpoint | Fungsi | Status |
 |---|---|---|
-| `POST /api/login` | JWT auth | Section 4.3 |
-| `GET /api/distributors` | Data distributor | Epic 1 |
-| `GET /api/sales` | Sell-in / Sell-out data | Story 1.1 |
-| `GET /api/inventory` | Stock + DOI calculation | Story 1.2 |
-| `GET /api/recommendations` | MITL cards | Epic 2 |
-| `POST /api/recommendations/{id}/action` | Approve/Modify/Reject | Story 4.1 |
-| `GET /api/recommendations/{id}/comments` | Discussion thread | Story 4.2 |
-| `POST /api/recommendations/{id}/comments` | Add comment | Story 4.2 |
-| `GET /api/audit-trail` | Riwayat aksi | Story 4.1 |
-| `GET/POST /api/promos` | Promo calendar CRUD | Story 2.1 |
+| `GET /health` | Health check | ✅ |
+| `GET /api/distributors` | Data distributor | ✅ |
+| `GET /api/sales` | Sell-in / Sell-out data | ✅ |
+| `GET /api/sales/skus` | Daftar SKU | ✅ |
+| `GET /api/inventory` | Stock + DOI calculation | ✅ |
+| `GET /api/regions/ranking` | Regional ranking | ✅ |
 
-### 🔴 Critical 2: Frontend adalah shell statis
+**Endpoint masih hilang (7):**
+| Endpoint | Fungsi | PRD Story | Prioritas |
+|---|---|---|---|
+| `POST /api/login` | JWT auth | Section 4.3 | P0 |
+| `GET /api/recommendations` | MITL cards | Epic 2 | P0 |
+| `POST /api/recommendations/{id}/action` | Approve/Modify/Reject | Story 4.1 | P1 |
+| `GET /api/recommendations/{id}/comments` | Discussion thread | Story 4.2 | P2 |
+| `POST /api/recommendations/{id}/comments` | Add comment | Story 4.2 | P2 |
+| `GET /api/audit-trail` | Riwayat aksi | Story 4.1 | P1 |
+| `GET/POST /api/promos` | Promo calendar CRUD | Story 2.1 | P3 |
 
-- Tidak ada data fetching (kecuali `/api/health`)
-- Tidak ada chart library di dependencies
-- Tidak ada komponen fungsional
-- Tidak ada routing (react-router)
+### 🔴 Critical 2: MITL Engine — Story 2.1 done, Story 2.2 masih kurang
 
-### 🔴 Critical 3: DOI calculation tidak ada
+**Status v1.0:** ❌ Tidak ada sama sekali
+**Status v2.0:** 🟡 Sebagian — data generator membuat seed data
+**Status v2.1:** 🟡 **Story 2.1 selesai**, masih kurang:
+- ✅ **Story 2.1 complete** — API + frontend cards + promo check + promo form
+- ❌ Story 2.2 (Escalate button + approval workflow) belum ada
+- ❌ Belum ada rule engine runtime untuk recompute otomatis
 
-PRD mensyaratkan `DOI = Current Inventory / Seasonally Adjusted Forecasted Daily Demand`. Logika ini tidak ada di mana pun — baik di backend API, data generator, maupun model.
+### 🔴 Critical 3: Auth & RBAC tidak ada
 
-### 🔴 Critical 4: Auth & RBAC tidak ada
-
-Aplikasi saat ini tidak memiliki login, tidak ada session, tidak ada role distinction antara Manager dan Director.
+**Status v1.0:** ❌
+**Status v2.0:** ❌ **Tidak ada perubahan**
+- Tidak ada endpoint `/login`
+- Tidak ada JWT middleware/dependency injection
+- Tidak ada tabel users / roles
+- Semua endpoint publik (tidak ada proteksi)
 
 ---
 
 ## 8. Minor Issues
 
-| # | Issue | Detail | Severity |
-|---|---|---|---|
-| 1 | Tidak ada `httpx`, `pytest`, `pytest-asyncio` | Tidak bisa testing API endpoints | Low |
-| 2 | `verify_local.py` hanya cover Fase 1 | Tidak ada test untuk API | Low |
-| 3 | `alembic.ini` hardcode DB URL | Tidak pakai env var | Low |
-| 4 | Tidak ada `.env.example` | Developer baru tidak tahu env vars apa yang dibutuhkan | Low |
-| 5 | Frontend proxy `http://backend:8000` hanya works di Docker | Dev lokal perlu konfig manual | Low |
-| 6 | Tidak ada `package-lock.json` di repo | Reproducible build risk | Low |
-| 7 | `requirements.txt` tidak pin version (kecuali range `>=`) | Bisa break di masa depan | Low |
+| # | Issue | Detail | Status v1.0 | Status v2.0 | Severitas |
+|---|---|---|---|---|---|
+| 1 | Tidak ada `httpx`, `pytest`, `pytest-asyncio` | Tidak bisa testing API endpoints | ❌ | ❌ Masih sama | Low |
+| 2 | `verify_local.py` hanya cover Fase 1 | Tidak ada test untuk API | ❌ | 🟡 `verify_e2e.py` sudah cover 6 endpoint | Medium |
+| 3 | `alembic.ini` hardcode DB URL | Tidak pakai env var | ❌ | ❌ Masih sama | Low |
+| 4 | Tidak ada `.env.example` | Developer baru tidak tahu env vars apa yang dibutuhkan | ❌ | ❌ Masih sama | Low |
+| 5 | Frontend proxy `http://backend:8000` hanya works di Docker | Dev lokal perlu konfig manual | ❌ | ❌ Masih sama | Low |
+| 6 | `requirements.txt` tidak pin version (kecuali range `>=`) | Bisa break di masa depan | ❌ | ❌ Masih sama | Low |
+| 7 | Data generator `profile: [manual]` | Belum otomatis (CronJob/Celery) | ❌ | ❌ Masih sama | Low |
+| 8 | `run.sh cron` hanya print template | Tidak auto-install crontab | ❌ | ❌ Masih sama | Low |
 
 ---
 
 ## 9. Kesesuaian dengan Phased Rollout PRD
 
-| Fase (PRD) | Deliverable | Status | Keterangan |
-|---|---|---|---|
-| Minggu 1–2 | Setup proyek + schema DB + data generator + 3 skenario dummy | ✅ **SELESAI** | Sesuai changelog PRD |
-| Minggu 3–4 | Epic 1: Dashboard (gap chart, stock health, tabel region) | ❌ **BELUM** | Tidak ada implementasi |
-| Minggu 5–6 | Epic 2: MITL Engine (rekomendasi card + promo check + approval) | ❌ **BELUM** | Hanya seed data, tidak ada serving |
-| Minggu 7–8 | Epic 4 + Epic 3.1 + Integrasi akhir + Demo | ❌ **BELUM** | Hanya struktur DB |
+| Fase (PRD) | Deliverable | Status v1.0 | Status v2.0 | Status v2.1 | Keterangan |
+|---|---|---|---|---|---|---|
+| Minggu 1–2 | Setup proyek + schema DB + data generator + 3 skenario dummy | ✅ | ✅ | ✅ **SELESAI** | Sesuai changelog PRD |
+| Minggu 3–4 | Epic 1: Dashboard (gap chart, stock health, tabel region) | ❌ | ✅ | ✅ **SELESAI** | Backend API + 3 komponen React + DOI service |
+| Minggu 5–6 | Epic 2: MITL Engine (rekomendasi card + promo check + approval) | ❌ | ❌ | 🟡 **PARsIAL** | Story 2.1 ✅ (API + UI cards + promo check + form), Story 2.2 ❌ |
+| Minggu 7–8 | Epic 4 + Epic 3.1 + Integrasi akhir + Demo | ❌ | ❌ | ❌ **BELUM** | Hanya struktur DB |
 
 ---
 
-## 10. Rekomendasi Prioritas
+## 10. Rekomendasi Prioritas (v2.1)
 
-Berdasarkan PRD dan gap analysis:
+Berdasarkan PRD dan gap analysis terkini (setelah Fase 1 + 2 + Story 2.1 selesai):
 
-1. **P0: Backend API Layer** — Buat semua endpoint REST (auth, sales, inventory, recommendations, promos, audit trail, comments)
-2. **P0: Auth & RBAC** — Implementasi JWT login + 2 role (manager, director)
-3. **P0: Frontend Dashboard** — Komponen grafik (Sell-In vs Sell-Out) + Stock Health cards dengan DOI
-4. **P1: MITL Cards** — Tampilkan recommendation cards dengan promo check logic
-5. **P1: Justification Gateway** — Reason Code dropdown + Free-Text Notes + audit trail save
-6. **P2: Discussion Threads** — Komentar per kartu rekomendasi
-7. **P2: Escalate Button** — Workflow approval sederhana
-8. **P3: Graceful Degradation** — Warning UI jika data stale
-9. **P3: Seasonality Weighting (Ws)** — Tabel lookup + CSV upload
-10. **P3: Promo Calendar Form** — Input promo manual di backend
+### P0 — Harus untuk MVP
+
+1. **Auth & RBAC** — Implementasi JWT login + 2 role (manager, director). Semua endpoint saat ini publik.
+2. **Story 2.2 — Escalate Button** — Tombol `[Escalate to Commercial/Legal]` + workflow approval sederhana (Pending → Approved/Rejected).
+
+### P1 — Penting untuk Demo
+
+3. **Justification Gateway** — Reason Code dropdown + Free-Text Notes + `POST /api/recommendations/{id}/action` + `GET /api/audit-trail`.
+4. **Rule Engine Runtime** — Trigger recompute kartu rekomendasi secara periodik (bukan hanya seed data).
+
+### P2 — Enhancement
+
+5. **Discussion Threads** — `GET/POST /api/recommendations/{id}/comments` + komponen thread di bawah kartu.
+6. **Graceful Degradation** — Deteksi staleness data + warning UI (accent kuning + tooltip).
+
+### P3 — Nice to Have
+
+7. **Seasonality Weighting (Ws)** — Tabel lookup + CSV upload.
+8. **Auto-polling Dashboard** — Interval fetch untuk refresh data real-time.
 
 ---
 
