@@ -64,8 +64,8 @@ export default function MITLCards({ onEscalate }) {
     setLoading(true)
     api('/api/recommendations')
       .then(r => r.json())
-      .then(data => {
-        setCards(data)
+      .then(d => {
+        if (Array.isArray(d)) setCards(d)
         setLoading(false)
       })
       .catch(() => setLoading(false))
