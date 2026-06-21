@@ -5,14 +5,14 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** Menyelesaikan sisa stories MVP: Auth, Story 2.2, 4.1, 4.2, 3.1
+- **Current Focus:** Menyelesaikan sisa stories MVP: Story 2.2, 4.1, 4.2, 3.1
 
 ## Current Position
 
-- **Phase:** 4 (Auth & RBAC) — next to execute
+- **Phase:** 4 (Auth & RBAC) — ✅ Complete
 - **Plan:** ROADMAP.md (5 stories remaining, each in separate branch)
 - **Status:** Infrastructure ready, pending implementation
-- **Progress:** ███████░░░░░ 65%
+- **Progress:** ████████░░░░ 73%
 
 ## Performance Metrics
 
@@ -50,7 +50,6 @@
 
 | Phase | Branch | Dependencies |
 |-------|--------|-------------|
-| Phase 4 — Auth & RBAC | `story-auth` | `main` |
 | Phase 5 — Story 2.2 (Escalate) | `story-2.2` | `story-auth` |
 | Phase 6 — Story 4.1 (Justification) | `story-4.1` | `story-2.2` |
 | Phase 7 — Story 4.2 (Discussion) | `story-4.2` | `story-2.2` |
@@ -74,12 +73,19 @@
 - **Result:** `story-2.1` code (MITL Cards + Promo) now in `main`. Clean base for all future branches.
 - **Commit:** `442a945` — planning docs committed to `main`
 
+### Latest Update
+
+- **Action:** Implementasi Phase 4 (Auth & RBAC) di branch `story-auth`
+- **Result:** User model, migration + seed data, auth endpoints, JWT middleware, frontend login page + AuthContext + protected API calls
+- **Branch:** `story-auth` (belum di-merge ke `main`)
+- **Files:** 10 files baru/dimodifikasi
+
 ### Quick Start for Next Session
 
 ```bash
-git checkout main     # Sudah include Phase 1 + 2 + 3
-git checkout -b story-auth
-# Implement JWT auth backend + login form frontend
+git checkout story-auth  # Phase 4 — Auth & RBAC active branch
+git checkout -b story-2.2
+# Implement Escalate button + approval workflow
 ```
 
 ### Related Files

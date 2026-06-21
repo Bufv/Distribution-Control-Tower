@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
+import { api } from '../api'
 
 export default function RegionalTable() {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    fetch('/api/regions/ranking')
+    api('/api/regions/ranking')
       .then(r => r.json())
       .then(setData)
       .catch(() => {})

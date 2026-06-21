@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../api'
 
 const SEVERITY_STYLES = {
   high: { border: 'border-red-400', bg: 'bg-red-50', badge: 'bg-red-600', label: 'High' },
@@ -58,7 +59,7 @@ export default function MITLCards() {
 
   useEffect(() => {
     setLoading(true)
-    fetch('/api/recommendations')
+    api('/api/recommendations')
       .then(r => r.json())
       .then(data => {
         setCards(data)

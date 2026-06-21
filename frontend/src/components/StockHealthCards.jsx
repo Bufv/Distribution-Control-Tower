@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../api'
 
 const INDICATORS = {
   overstock: { label: 'Overstock', color: 'bg-red-100 border-red-400 text-red-800', dot: '🔴' },
@@ -31,7 +32,7 @@ export default function StockHealthCards() {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    fetch('/api/inventory')
+    api('/api/inventory')
       .then(r => r.json())
       .then(setData)
       .catch(() => {})

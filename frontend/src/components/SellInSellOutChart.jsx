@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../api'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
@@ -10,7 +11,7 @@ export default function SellInSellOutChart() {
   const [period, setPeriod] = useState('monthly')
 
   useEffect(() => {
-    fetch('/api/sales/skus')
+    api('/api/sales/skus')
       .then(r => r.json())
       .then(setSkus)
       .catch(() => {})
@@ -20,7 +21,7 @@ export default function SellInSellOutChart() {
     const params = new URLSearchParams({ period })
     if (selectedSku) params.set('sku_id', selectedSku)
 
-    fetch(`/api/sales?${params}`)
+    api(`/api/sales?${params}`)
       .then(r => r.json())
       .then(setData)
       .catch(() => {})
