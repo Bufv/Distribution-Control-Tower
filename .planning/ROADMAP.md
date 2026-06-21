@@ -12,7 +12,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ## Phase 1: Infrastructure & Data Layer
 
-**Status:** ✅ COMPLETE (100%)
+**Status:** ✅ COMPLETE (100%) + bug fix `fix-data-generator-reentrant`
 **Branch:** `main`
 **Timeline:** Minggu 1–2
 
@@ -24,7 +24,8 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 1. `docker compose up` menjalankan 4 service (db, backend, frontend, data-generator)
 2. 8 tabel database terbuat via Alembic migration
 3. Data generator menghasilkan 3 skenario (Normal, Channel Stuffing, Stockout) secara round-robin
-4. Frontend React dapat diakses via browser di port 80
+4. Data generator dapat di-run berulang tanpa error duplicate — cleanup data lama sebelum insert
+5. Frontend React dapat diakses via browser di port 80
 
 ---
 

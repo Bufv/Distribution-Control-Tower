@@ -4,7 +4,7 @@ import random
 from datetime import date, timedelta, datetime
 from typing import List, Type
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import async_session
@@ -64,9 +64,16 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
     """Generate data harian untuk setiap distributor × SKU selama DAYS_TO_GENERATE hari."""
 
     async with async_session() as db:
+        today = date.today()
+        cutoff = today - timedelta(days=DAYS_TO_GENERATE)
+        await db.execute(delete(DailySales).where(DailySales.date >= cutoff))
+        await db.execute(delete(InventorySnapshot).where(InventorySnapshot.snapshot_date >= cutoff))
+        await db.execute(delete(PromoCalendar))
+        await db.execute(delete(RecommendationCard))
+        await db.commit()
+
         distributors, skus = await seed_master_data(db)
 
-        today = date.today()
         record_count = 0
 
         for distributor in distributors:
