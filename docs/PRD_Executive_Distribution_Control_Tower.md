@@ -17,6 +17,7 @@
 | 2026-06-19 | opencode | Fase 1: inisiasi proyek, schema DB (8 tabel), data generator, 3 skenario dummy, Docker Compose | Eksekusi MVP tahap infrastruktur |
 | 2026-06-20 | opencode | Fase 2: backend API layer (sales, inventory, distributors, regions) + DOI logic + frontend dashboard (grafik, stock health, regional table) | Eksekusi Epic 1 Executive Dashboard |
 | 2026-06-20 | opencode | Story 2.1: backend API recommendations + promo calendar + MITL card component + promo form (AC 2.1.1, 2.1.2, 2.1.3) | Eksekusi Epic 2 MITL Engine — tahap rekomendasi + promo check |
+| 2026-06-21 | opencode | ROADMAP.md + STATE.md + traceability: roadmap per-story dengan branch strategy (5 phase pending) | Perencanaan sisa MVP — tiap story di branch terpisah |
 
 ---
 
@@ -200,6 +201,26 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
 | **Data generator tidak realistis** | Demo tidak meyakinkan | Libatkan domain expert FMCG untuk validasi skenario dummy |
 | **Estimasi DOI meleset karena data musiman minim** | Rekomendasi kurang akurat | Gunakan tabel lookup Ws yang bisa diisi manual; jangan otomatis |
 | **Tim 1–3 dev kewalahan** | Jadwal molor | Prioritaskan Epic 1 & 2; Epic 4 disederhanakan (comment flat, tanpa notification real-time) |
+
+---
+
+## Traceability
+
+| Requirement | Phase | Branch | Status |
+|-------------|-------|--------|--------|
+| Infrastruktur (Docker, DB, schema, 8 tabel) | Phase 1 | `main` | ✅ Complete |
+| Data Generator (3 skenario, 5 distributor, 5 SKU) | Phase 1 | `main` | ✅ Complete |
+| Story 1.1 — Sell-In vs Sell-Out Gap Chart | Phase 2 | `main` | ✅ Complete |
+| Story 1.2 — Stock Health Tracker (DOI) | Phase 2 | `main` | ✅ Complete |
+| Story 1.3 — Regional Ranking Table | Phase 2 | `main` | ✅ Complete |
+| Story 2.1 — Promo-Aware Recommendation Cards | Phase 3 | `story-2.1` | ✅ Complete |
+| Auth & RBAC (JWT, 2 role, bcrypt) — Section 4.3 | Phase 4 | `story-auth` | ⏳ Pending |
+| Story 2.2 — Escalate to Commercial/Legal | Phase 5 | `story-2.2` | ⏳ Pending |
+| Story 4.1 — Justification Gateway (Reason Code + Notes) | Phase 6 | `story-4.1` | ⏳ Pending |
+| Story 4.2 — In-Context Discussion Thread | Phase 7 | `story-4.2` | ⏳ Pending |
+| Story 3.1 — Graceful Degradation on UI | Phase 8 | `story-3.1` | ⏳ Pending |
+
+**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 6/11 | **Pending:** 5/11
 
 ---
 
