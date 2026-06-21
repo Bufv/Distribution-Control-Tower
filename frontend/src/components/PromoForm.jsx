@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../api'
 
 export default function PromoForm({ onClose }) {
   const [distributors, setDistributors] = useState([])
@@ -15,17 +16,17 @@ export default function PromoForm({ onClose }) {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    fetch('/api/distributors')
+    api('/api/distributors')
       .then(r => r.json())
       .then(setDistributors)
-    fetch('/api/sales/skus')
+    api('/api/sales/skus')
       .then(r => r.json())
       .then(setSkus)
     fetchPromos()
   }, [])
 
   function fetchPromos() {
-    fetch('/api/promos')
+    api('/api/promos')
       .then(r => r.json())
       .then(setPromos)
   }
@@ -43,7 +44,7 @@ export default function PromoForm({ onClose }) {
     })
     if (form.discount_rate) params.set('discount_rate', form.discount_rate)
 
-    const res = await fetch(`/api/promos?${params}`, { method: 'POST' })
+    const res = await api(`/api/promos?${params}`, { method: 'POST' })
     const data = await res.json()
 
     if (res.ok) {
@@ -56,7 +57,7 @@ export default function PromoForm({ onClose }) {
   }
 
   async function handleDelete(id) {
-    const res = await fetch(`/api/promos/${id}`, { method: 'DELETE' })
+    const res = await api(`/api/promos/${id}`, { method: 'DELETE' })
     if (res.ok) {
       fetchPromos()
     }

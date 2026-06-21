@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { api } from '../api'
 
 const SEVERITY_STYLES = {
   high: { border: 'border-red-400', bg: 'bg-red-50', badge: 'bg-red-600', label: 'High' },
@@ -6,7 +7,7 @@ const SEVERITY_STYLES = {
   low: { border: 'border-blue-400', bg: 'bg-blue-50', badge: 'bg-blue-600', label: 'Low' },
 }
 
-function RecommendationCard({ card }) {
+function RecommendationCard({ card, onEscalate }) {
   const style = SEVERITY_STYLES[card.severity] || SEVERITY_STYLES.low
 
   return (
@@ -44,7 +45,10 @@ function RecommendationCard({ card }) {
         >
           Kurangi Alokasi
         </button>
-        <button className="flex-1 text-xs py-1.5 rounded font-medium border border-gray-300 text-gray-700 hover:bg-gray-100">
+        <button
+          onClick={() => onEscalate(card)}
+          className="flex-1 text-xs py-1.5 rounded font-medium border border-gray-300 text-gray-700 hover:bg-gray-100"
+        >
           Escalate
         </button>
       </div>
@@ -52,13 +56,13 @@ function RecommendationCard({ card }) {
   )
 }
 
-export default function MITLCards() {
+export default function MITLCards({ onEscalate }) {
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
-    fetch('/api/recommendations')
+    api('/api/recommendations')
       .then(r => r.json())
       .then(data => {
         setCards(data)
@@ -86,7 +90,7 @@ export default function MITLCards() {
   return (
     <div className="space-y-3">
       {cards.map(card => (
-        <RecommendationCard key={card.id} card={card} />
+        <RecommendationCard key={card.id} card={card} onEscalate={onEscalate} />
       ))}
     </div>
   )

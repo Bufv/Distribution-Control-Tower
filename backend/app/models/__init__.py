@@ -6,6 +6,9 @@ from app.models.promo import PromoCalendar
 from app.models.recommendation import RecommendationCard
 from app.models.audit_trail import AuditTrail
 from app.models.comment import Comment
+from app.models.user import User
+from app.models.escalation import EscalationTicket
+from app.models.notification import Notification
 
 __all__ = [
     "Distributor",
@@ -16,4 +19,7 @@ __all__ = [
     "RecommendationCard",
     "AuditTrail",
     "Comment",
+    "User",
+    "EscalationTicket",
+    "Notification",
 ]

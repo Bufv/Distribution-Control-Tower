@@ -68,7 +68,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ## Phase 4: Auth & RBAC
 
-**Status:** ⏳ PENDING
+**Status:** ✅ COMPLETE (100%)
 **Branch:** `story-auth`
 **Dependencies:** `main`
 **Timeline:** Setelah approval roadmap
@@ -89,7 +89,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ## Phase 5: MITL Engine — Story 2.2 (Escalate to Commercial/Legal)
 
-**Status:** ⏳ PENDING
+**Status:** ✅ COMPLETE (100%)
 **Branch:** `story-2.2`
 **Dependencies:** `story-auth`
 **Timeline:** Setelah Auth selesai
@@ -184,7 +184,7 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 |--------|-------------|-------|--------|
 | `main` | — | Phase 1, 2, 3 | ✅ Complete |
 | `story-2.1` | `main` | Phase 3 | ✅ Merged to `main` |
-| `story-auth` | `main` | Phase 4 | ⏳ Next |
+| `story-auth` | `main` | Phase 4 | ✅ Complete — branch aktif |
 | `story-2.2` | `story-auth` | Phase 5 | ⏳ Pending |
 | `story-4.1` | `story-2.2` | Phase 6 | ⏳ Pending |
 | `story-4.2` | `story-2.2` | Phase 7 | ⏳ Pending |
@@ -202,12 +202,12 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | Story 1.2 — Stock Health | Phase 2 | ✅ |
 | Story 1.3 — Regional Table | Phase 2 | ✅ |
 | Story 2.1 — Promo-Aware Cards | Phase 3 | ✅ |
-| Auth & RBAC (Section 4.3) | Phase 4 | ⏳ |
+| Auth & RBAC (Section 4.3) | Phase 4 | ✅ |
 | Story 2.2 — Escalate Button | Phase 5 | ⏳ |
 | Story 4.1 — Justification Gateway | Phase 6 | ⏳ |
 | Story 4.2 — Discussion Thread | Phase 7 | ⏳ |
 | Story 3.1 — Graceful Degradation | Phase 8 | ⏳ |
 
 **Coverage:** 11/11 v1 requirements mapped ✓
-**Completed:** 6/11 ✓
-**Pending:** 5/11 ⏳
+**Completed:** 7/11 ✓
+**Pending:** 4/11 ⏳
