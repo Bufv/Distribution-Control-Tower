@@ -6,11 +6,17 @@ import StockHealthCards from './components/StockHealthCards'
 import RegionalTable from './components/RegionalTable'
 import MITLCards from './components/MITLCards'
 import PromoForm from './components/PromoForm'
+import EscalateModal from './components/EscalateModal'
+import EscalationPanel from './components/EscalationPanel'
+import NotificationsDropdown from './components/NotificationsDropdown'
 
 function Dashboard() {
   const { user, logout } = useAuth()
   const [backendStatus, setBackendStatus] = useState('checking...')
   const [showPromoForm, setShowPromoForm] = useState(false)
+  const [escalateCard, setEscalateCard] = useState(null)
+
+  const isDirector = user?.role === 'director'
 
   useEffect(() => {
     const headers = {}
@@ -47,8 +53,9 @@ function Dashboard() {
           >
             Promo Calendar
           </button>
-          <div>
-            Backend: <span className="font-mono">{backendStatus}</span>
+          <div className="flex items-center justify-between">
+            <span>Backend: <span className="font-mono">{backendStatus}</span></span>
+            <NotificationsDropdown user={user} />
           </div>
           <button
             onClick={logout}
@@ -83,14 +90,21 @@ function Dashboard() {
 
       <aside className="w-80 bg-white border-l p-4 hidden lg:flex flex-col shrink-0">
         <h3 className="font-semibold text-sm uppercase tracking-wide text-gray-500 mb-4">
-          Tactic Panel
+          {isDirector ? 'Escalation Panel' : 'Tactic Panel'}
         </h3>
         <div className="flex-1 overflow-y-auto">
-          <MITLCards />
+          {isDirector ? (
+            <EscalationPanel user={user} />
+          ) : (
+            <MITLCards onEscalate={setEscalateCard} />
+          )}
         </div>
       </aside>
 
       {showPromoForm && <PromoForm onClose={() => setShowPromoForm(false)} />}
+      {escalateCard && (
+        <EscalateModal card={escalateCard} onClose={() => setEscalateCard(null)} />
+      )}
     </div>
   )
 }
