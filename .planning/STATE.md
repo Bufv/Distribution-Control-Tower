@@ -9,10 +9,10 @@
 
 ## Current Position
 
-- **Phase:** 4 (Auth & RBAC) — ✅ Complete
-- **Plan:** ROADMAP.md (5 stories remaining, each in separate branch)
-- **Status:** Infrastructure ready, pending implementation
-- **Progress:** ████████░░░░ 73%
+- **Phase:** 5 (MITL Engine — Story 2.2) — ✅ Complete
+- **Plan:** ROADMAP.md (3 stories remaining, each in separate branch)
+- **Status:** Escalate button + approval workflow done on `story-2.2`
+- **Progress:** ██████████░░ 82%
 
 ## Performance Metrics
 
@@ -30,6 +30,8 @@
 - **Phase 1 (main):** Full infrastructure — Docker Compose, 8 tabel DB, FastAPI app, React+Vite+Tailwind frontend, data generator (3 skenario), Nginx reverse proxy, run.sh
 - **Phase 2 (main):** Executive Dashboard — 6 API endpoints (distributors, sales, sales/skus, inventory + DOI, regions/ranking, health), 3 React komponen (SellInSellOutChart, StockHealthCards, RegionalTable), DOI calculation service
 - **Phase 3 (story-2.1):** MITL Cards + Promo Calendar — API recommendations dengan promo check, MITLCards component (promo-aware tag + disabled button), PromoForm component (CRUD promo), GET/POST/DELETE /api/promos
+- **Phase 4 (story-auth):** Auth & RBAC — User model, migration + seed data, JWT login, auth middleware, login page + AuthContext
+- **Phase 5 (story-2.2):** Escalate to Commercial/Legal — EscalationTicket + Notification models (migration 003), escalation API (POST escalate, GET list, POST approve/reject), notification API (GET list, POST read/read-all), EscalateModal, NotificationsDropdown, director EscalationPanel with Approve/Reject buttons
 
 ### Codebase Changes
 
@@ -50,7 +52,6 @@
 
 | Phase | Branch | Dependencies |
 |-------|--------|-------------|
-| Phase 5 — Story 2.2 (Escalate) | `story-2.2` | `story-auth` |
 | Phase 6 — Story 4.1 (Justification) | `story-4.1` | `story-2.2` |
 | Phase 7 — Story 4.2 (Discussion) | `story-4.2` | `story-2.2` |
 | Phase 8 — Story 3.1 (Degradation) | `story-3.1` | `main` |
@@ -75,17 +76,16 @@
 
 ### Latest Update
 
-- **Action:** Implementasi Phase 4 (Auth & RBAC) di branch `story-auth`
-- **Result:** User model, migration + seed data, auth endpoints, JWT middleware, frontend login page + AuthContext + protected API calls
-- **Branch:** `story-auth` (belum di-merge ke `main`)
-- **Files:** 10 files baru/dimodifikasi
+- **Action:** Implementasi Phase 5 (Story 2.2 — Escalate to Commercial/Legal) di branch `story-2.2`
+- **Result:** EscalationTicket + Notification models, migration 003, escalation API (escalate/list/approve/reject), notification API (list/read/read-all), EscalateModal, NotificationsDropdown, director EscalationPanel
+- **Branch:** `story-2.2` (berbasis dari `story-auth` — belum di-merge ke `main`)
+- **Files:** 7 files baru + 3 modified
 
 ### Quick Start for Next Session
 
 ```bash
-git checkout story-auth  # Phase 4 — Auth & RBAC active branch
-git checkout -b story-2.2
-# Implement Escalate button + approval workflow
+git checkout story-2.2  # Phase 5 — Escalate active branch
+# Next: Story 4.1 (Justification Gateway) or Story 4.2 (Discussion Thread)
 ```
 
 ### Related Files
