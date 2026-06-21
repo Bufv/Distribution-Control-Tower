@@ -12,7 +12,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ## Phase 1: Infrastructure & Data Layer
 
-**Status:** ✅ COMPLETE (100%) + bug fix `fix-data-generator-reentrant`
+**Status:** ✅ COMPLETE — bug fix `fix-data-generator-reentrant`: data generator incremental (tidak replace, akumulasi)
 **Branch:** `main`
 **Timeline:** Minggu 1–2
 
