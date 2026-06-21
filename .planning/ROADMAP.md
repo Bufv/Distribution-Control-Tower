@@ -51,7 +51,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 ## Phase 3: MITL Engine — Story 2.1 (Promo-Aware Cards)
 
 **Status:** ✅ COMPLETE (100%)
-**Branch:** `story-2.1`
+**Branch:** `story-2.1` → merged to `main`
 **Timeline:** Minggu 5–6 (parsial)
 
 **Goal:** Kartu rekomendasi sistem memeriksa kalender promo sebelum menyarankan pengurangan alokasi.
@@ -168,7 +168,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 ## Dependency Graph
 
 ```
-main
+main  (Phase 1 + 2 + 3 — story-2.1 merged)
 ├── story-auth  (Phase 4)
 │   └── story-2.2  (Phase 5)
 │       ├── story-4.1  (Phase 6)
@@ -182,9 +182,9 @@ main
 
 | Branch | Base Branch | Phase | Status |
 |--------|-------------|-------|--------|
-| `main` | — | Phase 1, 2 | ✅ Complete |
-| `story-2.1` | `main` | Phase 3 | ✅ Complete |
-| `story-auth` | `main` | Phase 4 | ⏳ Pending |
+| `main` | — | Phase 1, 2, 3 | ✅ Complete |
+| `story-2.1` | `main` | Phase 3 | ✅ Merged to `main` |
+| `story-auth` | `main` | Phase 4 | ⏳ Next |
 | `story-2.2` | `story-auth` | Phase 5 | ⏳ Pending |
 | `story-4.1` | `story-2.2` | Phase 6 | ⏳ Pending |
 | `story-4.2` | `story-2.2` | Phase 7 | ⏳ Pending |

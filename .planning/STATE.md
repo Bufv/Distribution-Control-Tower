@@ -31,6 +31,12 @@
 - **Phase 2 (main):** Executive Dashboard — 6 API endpoints (distributors, sales, sales/skus, inventory + DOI, regions/ranking, health), 3 React komponen (SellInSellOutChart, StockHealthCards, RegionalTable), DOI calculation service
 - **Phase 3 (story-2.1):** MITL Cards + Promo Calendar — API recommendations dengan promo check, MITLCards component (promo-aware tag + disabled button), PromoForm component (CRUD promo), GET/POST/DELETE /api/promos
 
+### Codebase Changes
+
+- **`story-2.1` merged to `main`** ✅ — Semua kode MITL Cards + Promo Calendar sekarang di `main`
+- **Planning files added** — `.planning/ROADMAP.md`, `.planning/STATE.md`, traceability di PRD
+- **Branch `main` sekarang sudah contains:** Phase 1 (infra) + Phase 2 (dashboard) + Phase 3 (MITL cards)
+
 ### Key Decisions
 
 - Story 1.3 (Regional Penetration Map) **OUT OF SCOPE MVP** — diganti tabel ranking region
@@ -62,10 +68,16 @@
 - **Result:** Roadmap per-story dengan branch strategy sudah terdokumentasi
 - **Next:** Eksekusi Phase 4 (Auth & RBAC) di branch `story-auth`
 
+### Previous Update
+
+- **Action:** Merge `story-2.1` → `main`, update ROADMAP dependency graph
+- **Result:** `story-2.1` code (MITL Cards + Promo) now in `main`. Clean base for all future branches.
+- **Commit:** `442a945` — planning docs committed to `main`
+
 ### Quick Start for Next Session
 
 ```bash
-git checkout main
+git checkout main     # Sudah include Phase 1 + 2 + 3
 git checkout -b story-auth
 # Implement JWT auth backend + login form frontend
 ```
