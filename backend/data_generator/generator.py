@@ -14,6 +14,10 @@ from app.models.daily_sales import DailySales
 from app.models.inventory import InventorySnapshot
 from app.models.promo import PromoCalendar
 from app.models.recommendation import RecommendationCard
+from app.models.escalation import EscalationTicket
+from app.models.audit_trail import AuditTrail
+from app.models.comment import Comment
+from app.models.notification import Notification
 
 from data_generator.scenarios import pick_scenario
 
@@ -65,6 +69,10 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
     """Generate data harian — cari tanggal terakhir, lanjut dari sana agar akumulasi."""
 
     async with async_session() as db:
+        await db.execute(delete(Notification))
+        await db.execute(delete(EscalationTicket))
+        await db.execute(delete(AuditTrail))
+        await db.execute(delete(Comment))
         await db.execute(delete(PromoCalendar))
         await db.execute(delete(RecommendationCard))
         await db.commit()
