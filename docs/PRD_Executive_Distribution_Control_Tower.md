@@ -19,6 +19,7 @@
 | 2026-06-20 | opencode | Story 2.1: backend API recommendations + promo calendar + MITL card component + promo form (AC 2.1.1, 2.1.2, 2.1.3) | Eksekusi Epic 2 MITL Engine — tahap rekomendasi + promo check |
 | 2026-06-21 | opencode | ROADMAP.md + STATE.md + traceability: roadmap per-story dengan branch strategy (5 phase pending) | Perencanaan sisa MVP — tiap story di branch terpisah |
 | 2026-06-21 | opencode | Phase 4: Auth & RBAC — User model, migration, seed data, JWT login, auth middleware, login page + AuthContext | Eksekusi Phase 4 Auth & RBAC di branch `story-auth` |
+| 2026-06-21 | opencode | Fix: data generator incremental — setiap run lanjut dari tanggal terakhir + baca inventory terakhir. Data terakumulasi, tidak di-replace | Bug fix Phase 1 gap — `fix-data-generator-reentrant` |
 
 ---
 

@@ -13,7 +13,7 @@ export default function SellInSellOutChart() {
   useEffect(() => {
     api('/api/sales/skus')
       .then(r => r.json())
-      .then(setSkus)
+      .then(d => Array.isArray(d) && setSkus(d))
       .catch(() => {})
   }, [])
 
@@ -23,7 +23,7 @@ export default function SellInSellOutChart() {
 
     api(`/api/sales?${params}`)
       .then(r => r.json())
-      .then(setData)
+      .then(d => Array.isArray(d) && setData(d))
       .catch(() => {})
   }, [period, selectedSku])
 

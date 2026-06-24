@@ -4,7 +4,7 @@ import random
 from datetime import date, timedelta, datetime
 from typing import List, Type
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import async_session
@@ -35,6 +35,7 @@ SEED_DATA_SKU: List[dict] = [
 ]
 
 DAYS_TO_GENERATE = 7
+ORIGIN_DATE = date(2026, 1, 1)
 BASE_SELL_IN_RANGE = (80, 120)
 BASE_SELL_OUT_RANGE = (70, 110)
 BASE_STOCK_RANGE = (500, 1500)
@@ -61,22 +62,36 @@ async def seed_master_data(db: AsyncSession) -> tuple[List[Distributor], List[Sk
 
 
 async def generate_data(scenario_class: Type, scenario_label: str) -> int:
-    """Generate data harian untuk setiap distributor × SKU selama DAYS_TO_GENERATE hari."""
+    """Generate data harian — cari tanggal terakhir, lanjut dari sana agar akumulasi."""
 
     async with async_session() as db:
+        await db.execute(delete(PromoCalendar))
+        await db.execute(delete(RecommendationCard))
+        await db.commit()
+
         distributors, skus = await seed_master_data(db)
 
-        today = date.today()
+        result = await db.execute(select(func.max(DailySales.date)))
+        max_date = result.scalar()
+        start_date = (max_date + timedelta(days=1)) if max_date else ORIGIN_DATE
+
         record_count = 0
 
         for distributor in distributors:
             for sku in skus:
-                running_inventory = random.randint(*BASE_STOCK_RANGE)
+                last_inv = (await db.execute(
+                    select(InventorySnapshot.current_stock).where(
+                        InventorySnapshot.distributor_id == distributor.id,
+                        InventorySnapshot.sku_id == sku.id,
+                    ).order_by(InventorySnapshot.snapshot_date.desc()).limit(1)
+                )).scalar()
+
+                running_inventory = last_inv if last_inv is not None else random.randint(*BASE_STOCK_RANGE)
                 base_sell_in = random.randint(*BASE_SELL_IN_RANGE)
                 base_sell_out = random.randint(*BASE_SELL_OUT_RANGE)
 
                 for day_offset in range(DAYS_TO_GENERATE):
-                    current_date = today - timedelta(days=DAYS_TO_GENERATE - 1 - day_offset)
+                    current_date = start_date + timedelta(days=day_offset)
 
                     sell_in = scenario_class.generate_sell_in(base_sell_in, day_offset)
                     sell_out = scenario_class.generate_sell_out(base_sell_out, day_offset, running_inventory)
@@ -105,8 +120,8 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
             distributor_id=distributors[0].id,
             sku_id=skus[0].id,
             promo_name="Promo MT Diskon 15%",
-            start_date=today + timedelta(days=10),
-            end_date=today + timedelta(days=40),
+            start_date=start_date + timedelta(days=10),
+            end_date=start_date + timedelta(days=40),
             discount_rate=15.00,
         ))
 

@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: distro_ct
       POSTGRES_USER: app
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-distribution_tower}
     ports:
       - "5432:5432"
     volumes:
@@ -25,6 +25,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql+asyncpg://app:${DB_PASSWORD:-changeme}@db:5432/distro_ct
+      PYTHONPATH: /app
     ports:
       - "8000:8000"
     command: >
@@ -50,9 +51,10 @@ services:
         condition: service_started
     environment:
       DATABASE_URL: postgresql+asyncpg://app:${DB_PASSWORD:-changeme}@db:5432/distro_ct
+      PYTHONPATH: /app
     profiles:
       - manual
-    command: python -m data_generator.main
+    command: sh -c "alembic upgrade head && python -m data_generator.main"
 
 volumes:
   pgdata:

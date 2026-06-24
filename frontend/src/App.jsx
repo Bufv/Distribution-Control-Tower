@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AuthProvider, useAuth } from './AuthContext'
+import { api } from './api'
 import LoginPage from './LoginPage'
 import SellInSellOutChart from './components/SellInSellOutChart'
 import StockHealthCards from './components/StockHealthCards'
@@ -19,12 +20,8 @@ function Dashboard() {
   const isDirector = user?.role === 'director'
 
   useEffect(() => {
-    const headers = {}
-    const token = localStorage.getItem('token')
-    if (token) headers['Authorization'] = `Bearer ${token}`
-
-    fetch('/api/health', { headers })
-      .then(res => res.json())
+    api('/api/health')
+      .then(r => r.json())
       .then(data => setBackendStatus(data.status))
       .catch(() => setBackendStatus('unreachable'))
   }, [])
