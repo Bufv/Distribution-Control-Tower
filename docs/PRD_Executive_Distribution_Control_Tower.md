@@ -19,6 +19,7 @@
 | 2026-06-20 | opencode | Story 2.1: backend API recommendations + promo calendar + MITL card component + promo form (AC 2.1.1, 2.1.2, 2.1.3) | Eksekusi Epic 2 MITL Engine — tahap rekomendasi + promo check |
 | 2026-06-21 | opencode | ROADMAP.md + STATE.md + traceability: roadmap per-story dengan branch strategy (5 phase pending) | Perencanaan sisa MVP — tiap story di branch terpisah |
 | 2026-06-21 | opencode | Phase 4: Auth & RBAC — User model, migration, seed data, JWT login, auth middleware, login page + AuthContext | Eksekusi Phase 4 Auth & RBAC di branch `story-auth` |
+| 2026-06-24 | opencode | Phase 6: Story 4.1 — Justification Gateway (Reason Code + Notes gate, audit trail API, panel review) | Eksekusi Epic 4 Contextual Collaboration — justification gateway |
 
 ---
 
@@ -217,11 +218,11 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
 | Story 2.1 — Promo-Aware Recommendation Cards | Phase 3 | `story-2.1` | ✅ Complete |
 | Auth & RBAC (JWT, 2 role, bcrypt) — Section 4.3 | Phase 4 | `story-auth` | ✅ Complete |
 | Story 2.2 — Escalate to Commercial/Legal | Phase 5 | `story-2.2` | ✅ Complete |
-| Story 4.1 — Justification Gateway (Reason Code + Notes) | Phase 6 | `story-4.1` | ⏳ Pending |
+| Story 4.1 — Justification Gateway (Reason Code + Notes) | Phase 6 | `story-4.1` | ✅ Complete |
 | Story 4.2 — In-Context Discussion Thread | Phase 7 | `story-4.2` | ⏳ Pending |
 | Story 3.1 — Graceful Degradation on UI | Phase 8 | `story-3.1` | ⏳ Pending |
 
-**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 8/11 | **Pending:** 3/11
+**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 9/11 | **Pending:** 2/11
 
 ---
 
