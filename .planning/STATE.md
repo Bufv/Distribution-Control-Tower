@@ -5,14 +5,14 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** Menyelesaikan sisa stories MVP: Story 2.2, 4.1, 4.2, 3.1
+- **Current Focus:** Menyelesaikan sisa stories MVP: Story 4.2, 3.1
 
 ## Current Position
 
-- **Phase:** 5 (MITL Engine — Story 2.2) — ✅ Complete
-- **Plan:** ROADMAP.md (3 stories remaining, each in separate branch)
-- **Status:** Escalate button + approval workflow done on `story-2.2`
-- **Progress:** ██████████░░ 82%
+- **Phase:** 6 (Justification Gateway — Story 4.1) — ✅ Complete
+- **Plan:** ROADMAP.md (2 stories remaining, each in separate branch)
+- **Status:** Action gate with reason code + notes + audit trail done on `story-4.1`
+- **Progress:** ██████████░░ 90%
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@
 - **Phase 3 (story-2.1):** MITL Cards + Promo Calendar — API recommendations dengan promo check, MITLCards component (promo-aware tag + disabled button), PromoForm component (CRUD promo), GET/POST/DELETE /api/promos
 - **Phase 4 (story-auth):** Auth & RBAC — User model, migration + seed data, JWT login, auth middleware, login page + AuthContext
 - **Phase 5 (story-2.2):** Escalate to Commercial/Legal — EscalationTicket + Notification models (migration 003), escalation API (POST escalate, GET list, POST approve/reject), notification API (GET list, POST read/read-all), EscalateModal, NotificationsDropdown, director EscalationPanel with Approve/Reject buttons
+- **Phase 6 (story-4.1):** Justification Gateway — POST action endpoint dengan reason_code + notes validation, GET audit-trail endpoint, ActionModal (4 reason codes dropdown + min 10 char notes), AuditTrailModal (riwayat audit per card), Modify/Reject buttons on MITL cards, card status indicator, auto-refresh after action
 
 ### Codebase Changes
 
@@ -52,8 +53,7 @@
 
 | Phase | Branch | Dependencies |
 |-------|--------|-------------|
-| Phase 6 — Story 4.1 (Justification) | `story-4.1` | `story-2.2` |
-| Phase 7 — Story 4.2 (Discussion) | `story-4.2` | `story-2.2` |
+| Phase 7 — Story 4.2 (Discussion) | `story-4.2` | `story-2.2` (bisa paralel dengan Story 4.1) |
 | Phase 8 — Story 3.1 (Degradation) | `story-3.1` | `main` |
 
 ### Open Questions / Blocker
@@ -76,16 +76,16 @@
 
 ### Latest Update
 
-- **Action:** Implementasi Phase 5 (Story 2.2 — Escalate to Commercial/Legal) di branch `story-2.2`
-- **Result:** EscalationTicket + Notification models, migration 003, escalation API (escalate/list/approve/reject), notification API (list/read/read-all), EscalateModal, NotificationsDropdown, director EscalationPanel
-- **Branch:** `story-2.2` (berbasis dari `story-auth` — belum di-merge ke `main`)
-- **Files:** 7 files baru + 3 modified
+- **Action:** Implementasi Phase 6 (Story 4.1 — Justification Gateway) di branch `story-4.1`
+- **Result:** POST action endpoint dengan reason_code + notes validation, GET audit-trail endpoint, ActionModal (4 reason codes dropdown + min 10 char notes gate), AuditTrailModal (riwayat audit per card), Modify/Reject buttons on MITL cards, card status indicator, auto-refresh after action
+- **Branch:** `story-4.1` (berbasis dari `main` — setelah story-auth + story-2.2 di-merge)
+- **Files:** 3 file baru (audit.py, ActionModal.jsx, AuditTrailModal.jsx) + 4 modified
 
 ### Quick Start for Next Session
 
 ```bash
-git checkout story-2.2  # Phase 5 — Escalate active branch
-# Next: Story 4.1 (Justification Gateway) or Story 4.2 (Discussion Thread)
+git checkout story-4.1  # Phase 6 — Justification Gateway active branch
+# Next: Story 4.2 (Discussion Thread) or Story 3.1 (Graceful Degradation)
 ```
 
 ### Related Files

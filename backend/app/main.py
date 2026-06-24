@@ -7,7 +7,7 @@ from sqlalchemy import select
 from app.config import settings
 from app.database import get_db
 from app.models.user import User
-from app.routers import distributors, sales, inventory, regions, recommendations, promos, auth, escalations, notifications
+from app.routers import distributors, sales, inventory, regions, recommendations, promos, auth, escalations, notifications, audit
 
 app = FastAPI(
     title="Executive Distribution Control Tower",
@@ -64,6 +64,7 @@ app.include_router(promos.router)
 app.include_router(auth.router)
 app.include_router(escalations.router)
 app.include_router(notifications.router)
+app.include_router(audit.router)
 
 
 @app.get("/api/health")

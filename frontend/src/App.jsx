@@ -8,6 +8,8 @@ import RegionalTable from './components/RegionalTable'
 import MITLCards from './components/MITLCards'
 import PromoForm from './components/PromoForm'
 import EscalateModal from './components/EscalateModal'
+import ActionModal from './components/ActionModal'
+import AuditTrailModal from './components/AuditTrailModal'
 import EscalationPanel from './components/EscalationPanel'
 import NotificationsDropdown from './components/NotificationsDropdown'
 
@@ -16,8 +18,15 @@ function Dashboard() {
   const [backendStatus, setBackendStatus] = useState('checking...')
   const [showPromoForm, setShowPromoForm] = useState(false)
   const [escalateCard, setEscalateCard] = useState(null)
+  const [actionCard, setActionCard] = useState(null)
+  const [auditCard, setAuditCard] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   const isDirector = user?.role === 'director'
+
+  const handleAction = (card, action) => setActionCard({ card, action })
+  const handleViewHistory = (card) => setAuditCard(card)
+  const handleActionDone = () => setRefreshKey(k => k + 1)
 
   useEffect(() => {
     api('/api/health')
@@ -93,7 +102,12 @@ function Dashboard() {
           {isDirector ? (
             <EscalationPanel user={user} />
           ) : (
-            <MITLCards onEscalate={setEscalateCard} />
+            <MITLCards
+              key={refreshKey}
+              onEscalate={setEscalateCard}
+              onAction={handleAction}
+              onViewHistory={handleViewHistory}
+            />
           )}
         </div>
       </aside>
@@ -101,6 +115,17 @@ function Dashboard() {
       {showPromoForm && <PromoForm onClose={() => setShowPromoForm(false)} />}
       {escalateCard && (
         <EscalateModal card={escalateCard} onClose={() => setEscalateCard(null)} />
+      )}
+      {actionCard && (
+        <ActionModal
+          card={actionCard.card}
+          action={actionCard.action}
+          onClose={() => setActionCard(null)}
+          onDone={handleActionDone}
+        />
+      )}
+      {auditCard && (
+        <AuditTrailModal card={auditCard} onClose={() => setAuditCard(null)} />
       )}
     </div>
   )
