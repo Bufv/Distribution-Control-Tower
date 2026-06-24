@@ -7,7 +7,7 @@ export default function RegionalTable() {
   useEffect(() => {
     api('/api/regions/ranking')
       .then(r => r.json())
-      .then(setData)
+      .then(d => Array.isArray(d) && setData(d))
       .catch(() => {})
   }, [])
 

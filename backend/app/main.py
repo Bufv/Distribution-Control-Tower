@@ -23,7 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-PUBLIC_PATHS = {"/health", "/api/login", "/docs", "/openapi.json", "/redoc"}
+PUBLIC_PATHS = {"/api/health", "/api/login", "/docs", "/openapi.json", "/redoc"}
 
 security = HTTPBearer(auto_error=False)
 
@@ -67,6 +67,6 @@ app.include_router(notifications.router)
 app.include_router(audit.router)
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health():
     return {"status": "ok"}

@@ -43,7 +43,7 @@
 | SQLAlchemy models | ✅ | `backend/app/models/` — 8 model sesuai tabel |
 | 3 skenario data generator | ✅ | `NormalScenario`, `ChannelStuffingScenario`, `StockoutScenario` di `scenarios.py` |
 | 5 distributor + 5 SKU | ✅ | Seed data di `generator.py` |
-| Round-robin skenario selection | ✅ | `pick_scenario()` via `/tmp/data_generator_counter.txt` |
+| Round-robin skenario selection | ✅ | `pick_scenario()` via DB counter table `scenario_counter` (persistent round-robin per run) |
 | Dockerfile backend & frontend | ✅ | `Dockerfile.backend` (python:3.12-slim), `Dockerfile.frontend` (node:20 → nginx) |
 | Nginx reverse proxy | ✅ | `nginx.conf` — proxy `/api/` ke `http://backend:8000` |
 | `run.sh` utility script | ✅ | Mode: dev, seed, docker, docker-stop, cron, verify |

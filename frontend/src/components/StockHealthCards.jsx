@@ -34,7 +34,7 @@ export default function StockHealthCards() {
   useEffect(() => {
     api('/api/inventory')
       .then(r => r.json())
-      .then(setData)
+      .then(d => Array.isArray(d) && setData(d))
       .catch(() => {})
   }, [])
 

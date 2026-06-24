@@ -20,6 +20,7 @@
 | 2026-06-21 | opencode | ROADMAP.md + STATE.md + traceability: roadmap per-story dengan branch strategy (5 phase pending) | Perencanaan sisa MVP — tiap story di branch terpisah |
 | 2026-06-21 | opencode | Phase 4: Auth & RBAC — User model, migration, seed data, JWT login, auth middleware, login page + AuthContext | Eksekusi Phase 4 Auth & RBAC di branch `story-auth` |
 | 2026-06-24 | opencode | Phase 6: Story 4.1 — Justification Gateway (Reason Code + Notes gate, audit trail API, panel review) | Eksekusi Epic 4 Contextual Collaboration — justification gateway |
+| 2026-06-21 | opencode | Fix: data generator incremental — setiap run lanjut dari tanggal terakhir + baca inventory terakhir. Data terakumulasi, tidak di-replace | Bug fix Phase 1 gap — `fix-data-generator-reentrant` |
 
 ---
 
