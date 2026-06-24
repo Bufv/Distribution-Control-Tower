@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import useStaleness from '../hooks/useStaleness'
+import StaleTooltip from './StaleTooltip'
 
 const SEVERITY_STYLES = {
   high: { border: 'border-red-400', bg: 'bg-red-50', badge: 'bg-red-600', label: 'High' },
@@ -7,11 +9,11 @@ const SEVERITY_STYLES = {
   low: { border: 'border-blue-400', bg: 'bg-blue-50', badge: 'bg-blue-600', label: 'Low' },
 }
 
-function RecommendationCard({ card, onEscalate, onAction, onViewHistory }) {
+function RecommendationCard({ card, onEscalate, onAction, onViewHistory, stale }) {
   const style = SEVERITY_STYLES[card.severity] || SEVERITY_STYLES.low
   const hasHistory = card.action_taken || card.reason_code || card.notes
 
-  return (
+  const cardContent = (
     <div className={`rounded-lg border-l-4 ${style.border} ${style.bg} p-3`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
@@ -82,11 +84,18 @@ function RecommendationCard({ card, onEscalate, onAction, onViewHistory }) {
       )}
     </div>
   )
+
+  return (
+    <StaleTooltip stale={stale} region={card.region}>
+      {cardContent}
+    </StaleTooltip>
+  )
 }
 
 export default function MITLCards({ onEscalate, onAction, onViewHistory }) {
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
+  const { stalenessMap } = useStaleness()
 
   const fetchCards = () => {
     setLoading(true)
@@ -128,6 +137,7 @@ export default function MITLCards({ onEscalate, onAction, onViewHistory }) {
           onEscalate={onEscalate}
           onAction={onAction}
           onViewHistory={onViewHistory}
+          stale={card.distributor_id ? stalenessMap[card.distributor_id]?.is_stale : false}
         />
       ))}
     </div>
