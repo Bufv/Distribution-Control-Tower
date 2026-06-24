@@ -220,10 +220,10 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
 | Auth & RBAC (JWT, 2 role, bcrypt) — Section 4.3 | Phase 4 | `story-auth` | ✅ Complete |
 | Story 2.2 — Escalate to Commercial/Legal | Phase 5 | `story-2.2` | ✅ Complete |
 | Story 4.1 — Justification Gateway (Reason Code + Notes) | Phase 6 | `story-4.1` | ✅ Complete |
-| Story 4.2 — In-Context Discussion Thread | Phase 7 | `story-4.2` | ⏳ Pending |
+| Story 4.2 — In-Context Discussion Thread | Phase 7 | `story-4.2` | ✅ Complete |
 | Story 3.1 — Graceful Degradation on UI | Phase 8 | `story-3.1` | ⏳ Pending |
 
-**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 9/11 | **Pending:** 2/11
+**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 10/11 | **Pending:** 1/11
 
 ---
 
