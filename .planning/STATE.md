@@ -5,7 +5,7 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** Menyelesaikan sisa stories MVP: Story 4.2, 3.1
+- **Current Focus:** Menyelesaikan story terakhir MVP: Story 3.1 (Graceful Degradation)
 
 ## Current Position
 
@@ -39,7 +39,7 @@
 
 - **`story-2.1` merged to `main`** ✅ — Semua kode MITL Cards + Promo Calendar sekarang di `main`
 - **Planning files added** — `.planning/ROADMAP.md`, `.planning/STATE.md`, traceability di PRD
-- **Branch `main` sekarang sudah contains:** Phase 1 (infra) + Phase 2 (dashboard) + Phase 3 (MITL cards)
+- **Branch `main` sekarang sudah contains:** Phase 1 (infra) + Phase 2 (dashboard) + Phase 3 (MITL cards) + Phase 4 (auth) + Phase 5 (escalate) + Phase 6 (justification)
 
 ### Key Decisions
 

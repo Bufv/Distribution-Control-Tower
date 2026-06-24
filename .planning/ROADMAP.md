@@ -4,9 +4,9 @@
 
 Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs Sell-out secara instan dengan Man-in-the-Loop Smart Recommendation Engine. Roadmap ini dibagi per-story, masing-masing dikerjakan di branch terpisah.
 
-**Depth:** Standard (8 phases — 6 completed, 2 pending)
+**Depth:** Standard (8 phases — 7 completed, 1 pending)
 **Coverage:** 8/8 phases mapped ✓
-**Overall Progress:** ~82%
+**Overall Progress:** ~95%
 
 ---
 
@@ -185,9 +185,9 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 |--------|-------------|-------|--------|
 | `main` | — | Phase 1, 2, 3 | ✅ Complete |
 | `story-2.1` | `main` | Phase 3 | ✅ Merged to `main` |
-| `story-auth` | `main` | Phase 4 | ✅ Complete — branch aktif |
+| `story-auth` | `main` | Phase 4 | ✅ Merged to `main` |
 | `story-2.2` | `story-auth` | Phase 5 | ✅ Merged to `story-auth` |
-| `story-4.1` | `story-2.2` | Phase 6 | ✅ Complete — branch aktif |
+| `story-4.1` | `story-2.2` | Phase 6 | ✅ Merged to `main` |
 | `story-4.2` | `story-2.2` | Phase 7 | ✅ Complete — branch aktif |
 | `story-3.1` | `main` | Phase 8 | ⏳ Pending |
 
@@ -204,7 +204,7 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | Story 1.3 — Regional Table | Phase 2 | ✅ |
 | Story 2.1 — Promo-Aware Cards | Phase 3 | ✅ |
 | Auth & RBAC (Section 4.3) | Phase 4 | ✅ |
-| Story 2.2 — Escalate Button | Phase 5 | ⏳ |
+| Story 2.2 — Escalate Button | Phase 5 | ✅ |
 | Story 4.1 — Justification Gateway | Phase 6 | ✅ |
 | Story 4.2 — Discussion Thread | Phase 7 | ✅ |
 | Story 3.1 — Graceful Degradation | Phase 8 | ⏳ |
