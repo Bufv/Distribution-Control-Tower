@@ -1,15 +1,32 @@
+import uuid
 from datetime import date, timedelta, datetime
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.dependencies import get_current_user
 from app.models.recommendation import RecommendationCard
 from app.models.daily_sales import DailySales
 from app.models.distributor import Distributor
 from app.models.promo import PromoCalendar
+from app.models.audit_trail import AuditTrail
 
 router = APIRouter(prefix="/api/recommendations", tags=["Recommendations"])
+
+REASON_CODES = [
+    "Logistics / Force Majeure",
+    "Commercial Strategy",
+    "Market Shock",
+    "Data Accuracy Doubt",
+]
+
+
+class ActionRequest(BaseModel):
+    action: str
+    reason_code: str
+    notes: str
 
 
 @router.get("")
@@ -88,6 +105,58 @@ async def list_recommendations(
             "promo_nearby": promo_nearby,
             "sell_in_cuttable": sell_in_cuttable,
             "promo_tag": "[DO NOT CUT ALLOCATION - PROMO PREP]" if promo_nearby else None,
+            "action_taken": card.action_taken,
+            "reason_code": card.reason_code,
+            "notes": card.notes,
         })
 
     return result_data
+
+
+@router.post("/{card_id}/action")
+async def take_action(
+    card_id: str,
+    body: ActionRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    try:
+        uid = uuid.UUID(card_id)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid card ID format")
+
+    card = await db.get(RecommendationCard, uid)
+    if not card:
+        raise HTTPException(404, detail="Recommendation card not found")
+
+    if body.action not in ("modify", "reject"):
+        raise HTTPException(400, detail="Action must be 'modify' or 'reject'")
+
+    if body.reason_code not in REASON_CODES:
+        raise HTTPException(400, detail=f"Invalid reason_code. Must be one of: {', '.join(REASON_CODES)}")
+
+    if not body.notes or len(body.notes.strip()) < 10:
+        raise HTTPException(400, detail="Notes must be at least 10 characters")
+
+    card.status = body.action + "ed"
+    card.action_taken = body.action
+    card.reason_code = body.reason_code
+    card.notes = body.notes.strip()
+    card.updated_at = datetime.utcnow()
+
+    audit = AuditTrail(
+        recommendation_card_id=uid,
+        action=body.action,
+        reason_code=body.reason_code,
+        notes=body.notes.strip(),
+        acted_by=current_user.get("full_name") or current_user.get("username"),
+    )
+    db.add(audit)
+    await db.commit()
+
+    return {
+        "status": "ok",
+        "card_id": card_id,
+        "action": body.action,
+        "message": f"Card {body.action}ed with reason: {body.reason_code}",
+    }
