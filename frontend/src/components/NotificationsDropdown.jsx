@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '../api'
 
 export default function NotificationsDropdown({ user }) {
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
 
   const fetchNotifications = async () => {
     try {
@@ -25,16 +24,6 @@ export default function NotificationsDropdown({ user }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
   const handleMarkRead = async (id) => {
     await api(`/api/notifications/${id}/read`, { method: 'POST' })
     setNotifications(prev => prev.filter(n => n.id !== id))
@@ -48,7 +37,7 @@ export default function NotificationsDropdown({ user }) {
   }
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative">
       <button
         onClick={() => setOpen(!open)}
         className="relative p-2 rounded hover:bg-gray-700 text-gray-300 hover:text-white transition"
@@ -66,36 +55,41 @@ export default function NotificationsDropdown({ user }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-900">Notifications</h4>
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllRead}
-                className="text-xs text-blue-600 hover:text-blue-800"
-              >
-                Mark all read
-              </button>
-            )}
-          </div>
-
-          <div className="max-h-64 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-8">No new notifications</p>
-            ) : (
-              notifications.map(n => (
-                <div
-                  key={n.id}
-                  className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 cursor-pointer"
-                  onClick={() => handleMarkRead(n.id)}
+        <div className="fixed inset-0 z-50" onClick={() => setOpen(false)}>
+          <div
+            className="absolute right-4 top-4 w-80 bg-white rounded-lg shadow-xl border border-gray-200"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <h4 className="text-sm font-semibold text-gray-900">Notifications</h4>
+              {unreadCount > 0 && (
+                <button
+                  onClick={handleMarkAllRead}
+                  className="text-xs text-blue-600 hover:text-blue-800"
                 >
-                  <p className="text-sm text-gray-800 line-clamp-2">{n.message}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(n.created_at).toLocaleString()}
-                  </p>
-                </div>
-              ))
-            )}
+                  Mark all read
+                </button>
+              )}
+            </div>
+
+            <div className="max-h-64 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-8">No new notifications</p>
+              ) : (
+                notifications.map(n => (
+                  <div
+                    key={n.id}
+                    className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 cursor-pointer"
+                    onClick={() => handleMarkRead(n.id)}
+                  >
+                    <p className="text-sm text-gray-800 line-clamp-2">{n.message}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {new Date(n.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}

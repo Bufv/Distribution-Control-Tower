@@ -22,6 +22,7 @@
 | 2026-06-21 | opencode | Fix: data generator incremental — setiap run lanjut dari tanggal terakhir + baca inventory terakhir. Data terakumulasi, tidak di-replace | Bug fix Phase 1 gap — `fix-data-generator-reentrant` |
 | 2026-06-24 | opencode | Phase 6: Story 4.1 — Justification Gateway (Reason Code + Notes gate, audit trail API, panel review) | Eksekusi Epic 4 Contextual Collaboration — justification gateway |
 | 2026-06-25 | opencode | Phase 7: Story 4.2 — Discussion Thread (GET/POST comments, @mention → notification, CommentModal) | Eksekusi Epic 4 Contextual Collaboration — discussion thread |
+| 2026-06-25 | opencode | Phase 8: Story 3.1 — Graceful Degradation (staleness endpoint, yellow accent + tooltip on stale data) | Eksekusi Epic 3 Data Governance — graceful degradation |
 
 ---
 
@@ -222,9 +223,9 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
 | Story 2.2 — Escalate to Commercial/Legal | Phase 5 | `story-2.2` | ✅ Complete |
 | Story 4.1 — Justification Gateway (Reason Code + Notes) | Phase 6 | `story-4.1` | ✅ Complete |
 | Story 4.2 — In-Context Discussion Thread | Phase 7 | `story-4.2` | ✅ Complete |
-| Story 3.1 — Graceful Degradation on UI | Phase 8 | `story-3.1` | ⏳ Pending |
+| Story 3.1 — Graceful Degradation on UI | Phase 8 | `story-3.1` | ✅ Complete |
 
-**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 10/11 | **Pending:** 1/11
+**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 11/11 | **Pending:** 0/11
 
 ---
 

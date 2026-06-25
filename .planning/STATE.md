@@ -5,14 +5,14 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** Menyelesaikan story terakhir MVP: Story 3.1 (Graceful Degradation)
+- **Current Focus:** MVP complete — semua 11 requirement ✅
 
 ## Current Position
 
-- **Phase:** 7 (Discussion Thread — Story 4.2) — ✅ Complete
-- **Plan:** ROADMAP.md (1 story remaining in separate branch)
-- **Status:** Comment thread per card with @mention notifications done on `story-4.2`
-- **Progress:** ████████████░ 95%
+- **Phase:** 8 (Graceful Degradation — Story 3.1) — ✅ Complete
+- **Plan:** ROADMAP.md — semua phase selesai
+- **Status:** Semua MVP stories (11/11) complete
+- **Progress:** ████████████ 100%
 
 ## Performance Metrics
 
@@ -34,12 +34,14 @@
 - **Phase 5 (story-2.2):** Escalate to Commercial/Legal — EscalationTicket + Notification models (migration 003), escalation API (POST escalate, GET list, POST approve/reject), notification API (GET list, POST read/read-all), EscalateModal, NotificationsDropdown, director EscalationPanel with Approve/Reject buttons
 - **Phase 6 (story-4.1):** Justification Gateway — POST action endpoint dengan reason_code + notes validation, GET audit-trail endpoint, ActionModal (4 reason codes dropdown + min 10 char notes), AuditTrailModal (riwayat audit per card), Modify/Reject buttons on MITL cards, card status indicator, auto-refresh after action
 - **Phase 7 (story-4.2):** Discussion Thread — GET/POST /api/recommendations/{id}/comments endpoint dengan @mention → notification, CommentModal (flat thread, auto-refresh), Comment button di MITLCards
+- **Phase 8 (story-3.1):** Graceful Degradation — GET /api/staleness endpoint, useStaleness hook + StaleTooltip, integrasi aksen kuning + tooltip ke StockHealthCards, RegionalTable, MITLCards
 
-### Codebase Changes
+### Active Branches (belum di-merge)
 
-- **`story-2.1` merged to `main`** ✅ — Semua kode MITL Cards + Promo Calendar sekarang di `main`
-- **Planning files added** — `.planning/ROADMAP.md`, `.planning/STATE.md`, traceability di PRD
-- **Branch `main` sekarang sudah contains:** Phase 1 (infra) + Phase 2 (dashboard) + Phase 3 (MITL cards) + Phase 4 (auth) + Phase 5 (escalate) + Phase 6 (justification)
+| Branch | Phase | Status |
+|--------|-------|--------|
+| `story-4.2` | Phase 7 — Discussion Thread | ✅ Complete, perlu PR ke `main` |
+| `story-3.1` | Phase 8 — Graceful Degradation | ✅ Complete, perlu PR ke `main` |
 
 ### Key Decisions
 
@@ -50,48 +52,30 @@
 - Rule-based engine (IF-THEN) — tanpa ML/AI
 - Seasonality Weighting (Ws) dari tabel lookup manual via CSV
 
-### Remaining Work
-
-| Phase | Branch | Dependencies |
-|-------|--------|-------------|
-| Phase 8 — Story 3.1 (Degradation) | `story-3.1` | `main` |
-
 ### Open Questions / Blocker
 
-- Tidak ada blocker saat ini
+- Perlu merge story-4.2 → main dan story-3.1 → main untuk menyelesaikan MVP
 
 ## Session Continuity
 
-### Last Session
-
-- **Action:** Membuat ROADMAP.md dan STATE.md
-- **Result:** Roadmap per-story dengan branch strategy sudah terdokumentasi
-- **Next:** Eksekusi Phase 4 (Auth & RBAC) di branch `story-auth`
-
-### Previous Update
-
-- **Action:** Merge `story-2.1` → `main`, update ROADMAP dependency graph
-- **Result:** `story-2.1` code (MITL Cards + Promo) now in `main`. Clean base for all future branches.
-- **Commit:** `442a945` — planning docs committed to `main`
-
 ### Latest Update
 
-- **Action:** Implementasi Phase 7 (Story 4.2 — Discussion Thread) di branch `story-4.2`
-- **Result:** GET/POST /api/recommendations/{id}/comments endpoint dengan @mention → notification, CommentModal (flat thread, auto-refresh), Comment button di MITLCards
-- **Branch:** `story-4.2` (berbasis dari `main`)
+- **Action:** Implementasi Phase 8 (Story 3.1 — Graceful Degradation) di branch `story-3.1`
+- **Result:** GET /api/staleness endpoint, useStaleness hook + StaleTooltip, integrasi aksen kuning + tooltip ke StockHealthCards, RegionalTable, MITLCards
+- **Branch:** `story-3.1` (berbasis dari `main`)
 - **Commits:**
-  - `d1b8260` — feat(7): add GET/POST comment endpoints with @mention notifications
-  - `5606b9e` — feat(7): CommentModal component with flat thread and @mention support
-  - `9ec6eb5` — feat(7): integrate Comment button in MITLCards + wire CommentModal in App
+  - `596bc37` — feat(8): add GET /api/staleness endpoint
+  - `d6dfd7b` — feat(8): useStaleness hook + StaleTooltip component
+  - `252d717` — feat(8): integrate stale indicators in all components
 
 ### Quick Start for Next Session
 
 ```bash
-git checkout story-3.1  # Phase 8 — Graceful Degradation (last pending phase)
+# Merge semua branch ke main
+git checkout main && git merge story-4.2 && git merge story-3.1
 ```
 
 ### Related Files
 
 - `.planning/ROADMAP.md` — Full roadmap with phase details
 - `docs/PRD_Executive_Distribution_Control_Tower.md` — Product requirements
-- `docs/AUDIT_IMPLEMENTASI.md` — Implementation audit (v2.1)
