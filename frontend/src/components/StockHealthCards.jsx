@@ -21,7 +21,8 @@ function HealthCard({ distributor, stale }) {
         </div>
         <span className="text-lg">{h.dot}</span>
       </div>
-      <div className="mt-2 text-xs flex gap-3">
+      <p className="mt-1 text-xs text-gray-500">Stok: {distributor.total_stock.toLocaleString()} unit</p>
+      <div className="mt-1 text-xs flex gap-3">
         <span>🔴 {distributor.details.overstock}</span>
         <span>🟢 {distributor.details.healthy}</span>
         <span>🟡 {distributor.details.understock}</span>

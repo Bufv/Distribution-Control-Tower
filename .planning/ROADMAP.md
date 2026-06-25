@@ -4,9 +4,9 @@
 
 Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs Sell-out secara instan dengan Man-in-the-Loop Smart Recommendation Engine. Roadmap ini dibagi per-story, masing-masing dikerjakan di branch terpisah.
 
-**Depth:** Standard (8 phases — 8 completed, 0 pending)
-**Coverage:** 8/8 phases mapped ✓
-**Overall Progress:** ~100%
+**Depth:** Standard (9 phases — 8 completed, 1 in progress)
+**Coverage:** 9/9 phases mapped ✓
+**Overall Progress:** ~90% (Phase 9 in progress)
 
 ---
 
@@ -166,6 +166,26 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ---
 
+## Phase 9: UI Enhancement & Stock Visibility
+
+**Status:** 🚧 IN PROGRESS
+**Branch:** `story-5`
+**Timeline:** Post-MVP
+
+**Goal:** Visibilitas stok aktual, navigasi sidebar aktif, konsolidasi MITL Detail Modal untuk UX lebih baik.
+
+**Requirements:**
+- Story 5.1 — Inventory Health Page (AC 5.1.1, 5.1.2, 5.1.3)
+- Story 5.2 — MITL Detail Modal Consolidated (AC 5.2.1, 5.2.2, 5.2.3)
+
+**Success Criteria:**
+1. Kartu Stock Health menampilkan angka stok aktual + halaman Inventory Health terpisah dengan filter distributor
+2. MITL Card hanya punya 1 tombol [Lihat Detail] yang membuka modal komprehensif (detail + inventory + actions + comments + history)
+3. Sidebar navigasi "Dashboard" dan "Inventory Health" berfungsi (2 tab aktif)
+4. ActionModal / EscalateModal / AuditTrailModal / CommentModal dihapus — fungsinya pindah ke MITLDetailModal
+
+---
+
 ## Dependency Graph
 
 ```
@@ -175,6 +195,8 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 │       ├── story-4.1  (Phase 6)
 │       └── story-4.2  (Phase 7)
 └── story-3.1  (Phase 8 — independen, bisa paralel)
+
+story-5  (Phase 9 — enhancement post-MVP)
 ```
 
 ---
@@ -190,6 +212,7 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | `story-4.1` | `story-2.2` | Phase 6 | ✅ Merged to `main` |
 | `story-4.2` | `story-2.2` | Phase 7 | ✅ Merged to `main` |
 | `story-3.1` | `main` | Phase 8 | ✅ Merged to `main` |
+| `story-5` | `main` | Phase 9 | 🚧 In Progress |
 
 ---
 
@@ -208,7 +231,9 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | Story 4.1 — Justification Gateway | Phase 6 | ✅ |
 | Story 4.2 — Discussion Thread | Phase 7 | ✅ |
 | Story 3.1 — Graceful Degradation | Phase 8 | ✅ |
+| Story 5.1 — Inventory Health Page | Phase 9 | 🚧 |
+| Story 5.2 — MITL Detail Modal (Consolidated) | Phase 9 | 🚧 |
 
-**Coverage:** 11/11 v1 requirements mapped ✓
-**Completed:** 11/11 ✓
-**Pending:** 0/11
+**Coverage:** 13/13 requirements mapped ✓
+**Completed:** 11/13 ✓
+**Pending:** 2/13 (Phase 9)
