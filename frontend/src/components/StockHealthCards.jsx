@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
-import useStaleness from '../hooks/useStaleness'
-import StaleTooltip from './StaleTooltip'
 
 const INDICATORS = {
   overstock: { label: 'Overstock', color: 'bg-red-100 border-red-400 text-red-800', dot: '🔴' },
@@ -9,10 +7,10 @@ const INDICATORS = {
   understock: { label: 'Understock / OOS Risk', color: 'bg-yellow-100 border-yellow-400 text-yellow-800', dot: '🟡' },
 }
 
-function HealthCard({ distributor, stale }) {
+function HealthCard({ distributor }) {
   const h = INDICATORS[distributor.health] || INDICATORS.healthy
 
-  const card = (
+  return (
     <div className={`rounded-lg border-l-4 p-3 ${h.color}`}>
       <div className="flex items-center justify-between">
         <div>
@@ -28,17 +26,10 @@ function HealthCard({ distributor, stale }) {
       </div>
     </div>
   )
-
-  return (
-    <StaleTooltip stale={stale} region={distributor.region}>
-      {card}
-    </StaleTooltip>
-  )
 }
 
 export default function StockHealthCards() {
   const [data, setData] = useState([])
-  const { stalenessMap } = useStaleness()
 
   useEffect(() => {
     api('/api/inventory')
@@ -63,7 +54,7 @@ export default function StockHealthCards() {
       <h3 className="text-lg font-semibold text-gray-800 mb-4">Stock Health</h3>
       <div className="space-y-3">
         {data.map(d => (
-          <HealthCard key={d.distributor_id} distributor={d} stale={stalenessMap[d.distributor_id]?.is_stale} />
+          <HealthCard key={d.distributor_id} distributor={d} />
         ))}
       </div>
     </div>
