@@ -188,8 +188,8 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | `story-auth` | `main` | Phase 4 | ✅ Merged to `main` |
 | `story-2.2` | `story-auth` | Phase 5 | ✅ Merged to `main` |
 | `story-4.1` | `story-2.2` | Phase 6 | ✅ Merged to `main` |
-| `story-4.2` | `story-2.2` | Phase 7 | ✅ Complete — perlu PR ke `main` |
-| `story-3.1` | `main` | Phase 8 | ✅ Complete — perlu PR ke `main` |
+| `story-4.2` | `story-2.2` | Phase 7 | ✅ Merged to `main` |
+| `story-3.1` | `main` | Phase 8 | ✅ Merged to `main` |
 
 ---
 

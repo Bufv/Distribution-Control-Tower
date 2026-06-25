@@ -5,7 +5,7 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** MVP complete — semua 11 requirement ✅
+- **Current Focus:** MVP complete — semua 11 requirement ✅ — semua branch sudah di-merge ke `main`
 
 ## Current Position
 
@@ -36,12 +36,7 @@
 - **Phase 7 (story-4.2):** Discussion Thread — GET/POST /api/recommendations/{id}/comments endpoint dengan @mention → notification, CommentModal (flat thread, auto-refresh), Comment button di MITLCards
 - **Phase 8 (story-3.1):** Graceful Degradation — GET /api/staleness endpoint, useStaleness hook + StaleTooltip, integrasi aksen kuning + tooltip ke StockHealthCards, RegionalTable, MITLCards
 
-### Active Branches (belum di-merge)
-
-| Branch | Phase | Status |
-|--------|-------|--------|
-| `story-4.2` | Phase 7 — Discussion Thread | ✅ Complete, perlu PR ke `main` |
-| `story-3.1` | Phase 8 — Graceful Degradation | ✅ Complete, perlu PR ke `main` |
+Semua branch sudah di-merge ke `main` — MVP 100% terintegrasi.
 
 ### Key Decisions
 
@@ -52,28 +47,14 @@
 - Rule-based engine (IF-THEN) — tanpa ML/AI
 - Seasonality Weighting (Ws) dari tabel lookup manual via CSV
 
-### Open Questions / Blocker
-
-- Perlu merge story-4.2 → main dan story-3.1 → main untuk menyelesaikan MVP
-
 ## Session Continuity
 
 ### Latest Update
 
-- **Action:** Implementasi Phase 8 (Story 3.1 — Graceful Degradation) di branch `story-3.1`
-- **Result:** GET /api/staleness endpoint, useStaleness hook + StaleTooltip, integrasi aksen kuning + tooltip ke StockHealthCards, RegionalTable, MITLCards
-- **Branch:** `story-3.1` (berbasis dari `main`)
-- **Commits:**
-  - `596bc37` — feat(8): add GET /api/staleness endpoint
-  - `d6dfd7b` — feat(8): useStaleness hook + StaleTooltip component
-  - `252d717` — feat(8): integrate stale indicators in all components
-
-### Quick Start for Next Session
-
-```bash
-# Merge semua branch ke main
-git checkout main && git merge story-4.2 && git merge story-3.1
-```
+- **Action:** Semua branch MVP sudah di-merge ke `main` — 11/11 requirement terintegrasi penuh
+- **Merge PRs:**
+  - `dba4059` — Merge PR #6: `story-4.2` (Phase 7 — Discussion Thread)
+  - `735b93b` → `6208734` — Merge + re-apply PR #9: `story-3.1` (Phase 8 — Graceful Degradation)
 
 ### Related Files
 
