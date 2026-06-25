@@ -16,6 +16,7 @@ from app.models.audit_trail import AuditTrail
 from app.models.comment import Comment
 from app.models.notification import Notification
 from app.models.user import User
+from app.models.tactic import Tactic
 
 router = APIRouter(prefix="/api/recommendations", tags=["Recommendations"])
 
@@ -42,6 +43,7 @@ async def list_recommendations(
     region: str = None,
     severity: str = None,
     status: str = None,
+    include_actioned: bool = False,
     db: AsyncSession = Depends(get_db),
 ):
     query = select(RecommendationCard).order_by(
@@ -49,12 +51,14 @@ async def list_recommendations(
         RecommendationCard.created_at.desc(),
     )
 
+    if not include_actioned and not status:
+        query = query.where(RecommendationCard.status == "pending")
+    elif status:
+        query = query.where(RecommendationCard.status == status)
     if region:
         query = query.where(RecommendationCard.region == region)
     if severity:
         query = query.where(RecommendationCard.severity == severity)
-    if status:
-        query = query.where(RecommendationCard.status == status)
 
     result = await db.execute(query)
     cards = result.scalars().all()
@@ -109,6 +113,12 @@ async def list_recommendations(
             "status": card.status,
             "region": card.region,
             "distributor_id": str(card.distributor_id) if card.distributor_id else None,
+            "sku_id": str(card.sku_id) if card.sku_id else None,
+            "financial_impact": card.financial_impact,
+            "suggest_escalate": card.suggest_escalate,
+            "expected_metric": card.expected_metric,
+            "expected_direction": card.expected_direction,
+            "expected_change_pct": card.expected_change_pct,
             "created_at": card.created_at.isoformat() if card.created_at else None,
             "promo_nearby": promo_nearby,
             "sell_in_cuttable": sell_in_cuttable,
@@ -119,6 +129,57 @@ async def list_recommendations(
         })
 
     return result_data
+
+
+@router.post("/{card_id}/approve")
+async def approve_recommendation(
+    card_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Approve recommendation → auto-create Tactic in draft."""
+    try:
+        uid = uuid.UUID(card_id)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid card ID format")
+
+    card = await db.get(RecommendationCard, uid)
+    if not card:
+        raise HTTPException(404, detail="Recommendation card not found")
+    if card.status != "pending":
+        raise HTTPException(400, detail=f"Card already {card.status}")
+
+    card.status = "approved"
+    card.updated_at = datetime.utcnow()
+
+    tactic = Tactic(
+        title=card.title or "Tactic from recommendation",
+        description=card.description,
+        tactic_type=card.recommendation_type or "investigation",
+        severity=card.severity,
+        source_recommendation_id=uid,
+        source_type="system",
+        region=card.region,
+        distributor_id=card.distributor_id,
+        sku_id=card.sku_id,
+        financial_impact_est=card.financial_impact,
+        created_by=uuid.UUID(current_user["id"]),
+        proposal_notes=card.notes or f"Approved from recommendation: {card.title}",
+        reason_code=card.reason_code,
+        expected_metric=card.expected_metric,
+        expected_direction=card.expected_direction,
+        expected_change_pct=card.expected_change_pct,
+        status="draft",
+    )
+    db.add(tactic)
+    await db.commit()
+
+    return {
+        "status": "ok",
+        "card_id": card_id,
+        "tactic_id": str(tactic.id),
+        "message": "Tactic created in Action Plan",
+    }
 
 
 @router.post("/{card_id}/action")
@@ -160,12 +221,39 @@ async def take_action(
         acted_by=current_user.get("full_name") or current_user.get("username"),
     )
     db.add(audit)
+
+    tactic_id = None
+    if body.action == "modify":
+        tactic = Tactic(
+            title=f"[Modified] {card.title or 'Tactic'}",
+            description=card.description,
+            tactic_type=card.recommendation_type or "investigation",
+            severity=card.severity,
+            source_recommendation_id=uid,
+            source_type="system",
+            region=card.region,
+            distributor_id=card.distributor_id,
+            sku_id=card.sku_id,
+            financial_impact_est=card.financial_impact,
+            created_by=uuid.UUID(current_user["id"]),
+            proposal_notes=body.notes.strip(),
+            reason_code=body.reason_code,
+            expected_metric=card.expected_metric,
+            expected_direction=card.expected_direction,
+            expected_change_pct=card.expected_change_pct,
+            status="draft",
+        )
+        db.add(tactic)
+        await db.flush()
+        tactic_id = str(tactic.id)
+
     await db.commit()
 
     return {
         "status": "ok",
         "card_id": card_id,
         "action": body.action,
+        "tactic_id": tactic_id,
         "message": f"Card {body.action}ed with reason: {body.reason_code}",
     }
 

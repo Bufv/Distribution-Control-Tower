@@ -10,6 +10,7 @@ from app.dependencies import get_current_user
 from app.models.escalation import EscalationTicket
 from app.models.notification import Notification
 from app.models.recommendation import RecommendationCard
+from app.models.tactic import Tactic
 
 router = APIRouter(prefix="/api", tags=["Escalations"])
 
@@ -35,6 +36,9 @@ async def escalate_recommendation(
 
     if not reason or len(reason.strip()) < 10:
         raise HTTPException(400, detail="Reason must be at least 10 characters")
+
+    card.status = "escalated"
+    card.updated_at = datetime.utcnow()
 
     ticket = EscalationTicket(
         recommendation_card_id=uid,
@@ -139,9 +143,36 @@ async def approve_escalation(
         related_entity_id=ticket.id,
     )
     db.add(notif)
+
+    # Auto-create Tactic with status=approved (skip pipeline — escalation = urgent)
+    card = await db.get(RecommendationCard, ticket.recommendation_card_id)
+    if card:
+        card.status = "approved"
+        card.updated_at = datetime.utcnow()
+        tactic = Tactic(
+            title=card.title or "Tactic from escalation",
+            description=card.description,
+            tactic_type=card.recommendation_type or "investigation",
+            severity=card.severity,
+            source_recommendation_id=card.id,
+            source_type="system",
+            region=card.region,
+            distributor_id=card.distributor_id,
+            sku_id=card.sku_id,
+            financial_impact_est=card.financial_impact,
+            created_by=ticket.escalated_by,
+            status="approved",
+            approved_by=uuid.UUID(current_user["id"]),
+            approved_at=datetime.utcnow(),
+            expected_metric=card.expected_metric,
+            expected_direction=card.expected_direction,
+            expected_change_pct=card.expected_change_pct,
+        )
+        db.add(tactic)
+
     await db.commit()
 
-    return {"status": "approved", "message": "Escalation approved"}
+    return {"status": "approved", "message": "Escalation approved. Tactic auto-created."}
 
 
 @router.post("/escalations/{ticket_id}/reject")
@@ -176,6 +207,12 @@ async def reject_escalation(
         related_entity_id=ticket.id,
     )
     db.add(notif)
+
+    card = await db.get(RecommendationCard, ticket.recommendation_card_id)
+    if card:
+        card.status = "rejected"
+        card.updated_at = datetime.utcnow()
+
     await db.commit()
 
     return {"status": "rejected", "message": "Escalation rejected"}

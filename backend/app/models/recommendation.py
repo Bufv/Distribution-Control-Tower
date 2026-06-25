@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import String, Integer, DateTime, Text, ForeignKey
+from sqlalchemy import String, Integer, BigInteger, Boolean, Float, DateTime, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -18,6 +18,11 @@ class RecommendationCard(Base):
     distributor_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("distributors.id"))
     sku_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("sku_catalog.id"))
     region: Mapped[str | None] = mapped_column(String(100))
+    financial_impact: Mapped[int | None] = mapped_column(BigInteger)
+    suggest_escalate: Mapped[bool] = mapped_column(Boolean, default=False)
+    expected_metric: Mapped[str | None] = mapped_column(String(50))
+    expected_direction: Mapped[str | None] = mapped_column(String(20))
+    expected_change_pct: Mapped[float | None] = mapped_column(Float)
     action_taken: Mapped[str | None] = mapped_column(Text)
     reason_code: Mapped[str | None] = mapped_column(String(50))
     notes: Mapped[str | None] = mapped_column(Text)

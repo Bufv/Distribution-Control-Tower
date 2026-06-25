@@ -168,7 +168,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ## Phase 9: UI Enhancement & Stock Visibility
 
-**Status:** 🚧 IN PROGRESS
+**Status:** ✅ COMPLETE — merged to `main`
 **Branch:** `story-5`
 **Timeline:** Post-MVP
 
@@ -186,6 +186,33 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ---
 
+## Phase 10: Commercial Action Plan & Tactic Workflow
+
+**Status:** ✅ COMPLETE
+**Branch:** `story-10-action-plan`
+**Timeline:** Post-Phase 9
+
+**Goal:** Mengubah MITL dari sistem rekomendasi broken-lifecycle menjadi Action Plan sejati dengan data generator realistis, system-verified execution, dan kanban swimlane.
+
+**Requirements:**
+- Story 10.1 — Data Generator Upgrade (financial impact, realistic scenarios, context-aware)
+- Story 10.2 — Tactic API + Verification System (lifecycle draft → submitted → approved/rejected → executed → verified)
+- Story 10.3 — System Recommendations Panel (read-only, action langsung: approve/modify/reject)
+- Story 10.4 — Commercial Action Plan Tab (kanban swimlane, create tactic manual, full lifecycle)
+- Story 10.5 — Archive + Layout Final (table history, sidebar 4 tab aktif)
+
+**Success Criteria:**
+1. Data generator menghasilkan rekomendasi dengan financial_impact >= Rp 200jt auto-escalate
+2. Tactic lifecycle lengkap: draft → submitted → approved/rejected → executed → verified
+3. Manager bisa create tactic manual / dari approve rekomendasi
+4. Director approve/reject tactic di swimlane
+5. System-verified execution: bandingkan baseline vs outcome data 7 hari
+6. Card yang sudah di-action hilang dari panel rekomendasi
+7. Regional Table dihapus dari dashboard
+8. Sidebar: Dashboard, Commercial Action Plan, Inventory Health, Archive — semuanya aktif
+
+---
+
 ## Dependency Graph
 
 ```
@@ -194,9 +221,12 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 │   └── story-2.2  (Phase 5)
 │       ├── story-4.1  (Phase 6)
 │       └── story-4.2  (Phase 7)
-└── story-3.1  (Phase 8 — independen, bisa paralel)
-
-story-5  (Phase 9 — enhancement post-MVP)
+├── story-3.1  (Phase 8 — independen, bisa paralel)
+├── story-5  (Phase 9 — enhancement post-MVP)
+└── story-10-action-plan  (Phase 10 — Commercial Action Plan)
+    └── Wave 1: Data Generator + Tactic API (paralel)
+        └── Wave 2: SystemRecommendations + ActionPlan Tab (paralel)
+            └── Wave 3: Archive + Layout Integration
 ```
 
 ---
@@ -212,7 +242,8 @@ story-5  (Phase 9 — enhancement post-MVP)
 | `story-4.1` | `story-2.2` | Phase 6 | ✅ Merged to `main` |
 | `story-4.2` | `story-2.2` | Phase 7 | ✅ Merged to `main` |
 | `story-3.1` | `main` | Phase 8 | ✅ Merged to `main` |
-| `story-5` | `main` | Phase 9 | 🚧 In Progress |
+| `story-5` | `main` | Phase 9 | ✅ Complete |
+| `story-10-action-plan` | `main` | Phase 10 | ✅ Complete |
 
 ---
 
@@ -231,9 +262,14 @@ story-5  (Phase 9 — enhancement post-MVP)
 | Story 4.1 — Justification Gateway | Phase 6 | ✅ |
 | Story 4.2 — Discussion Thread | Phase 7 | ✅ |
 | Story 3.1 — Graceful Degradation | Phase 8 | ✅ |
-| Story 5.1 — Inventory Health Page | Phase 9 | 🚧 |
-| Story 5.2 — MITL Detail Modal (Consolidated) | Phase 9 | 🚧 |
+| Story 5.1 — Inventory Health Page | Phase 9 | ✅ |
+| Story 5.2 — MITL Detail Modal (Consolidated) | Phase 9 | ✅ |
+| Story 10.1 — Data Generator Upgrade | Phase 10 | ✅ |
+| Story 10.2 — Tactic API + Verification | Phase 10 | ✅ |
+| Story 10.3 — System Recommendations Panel | Phase 10 | ✅ |
+| Story 10.4 — Commercial Action Plan Tab | Phase 10 | ✅ |
+| Story 10.5 — Archive + Layout Final | Phase 10 | ✅ |
 
-**Coverage:** 13/13 requirements mapped ✓
-**Completed:** 11/13 ✓
-**Pending:** 2/13 (Phase 9)
+**Coverage:** 18/18 requirements mapped ✓
+**Completed:** 18/18 ✓
+**Pending:** — (all phases complete)

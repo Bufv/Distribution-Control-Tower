@@ -24,6 +24,7 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    id: str
     role: str
     full_name: str | None = None
 
@@ -42,6 +43,7 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {
         "sub": user.username,
+        "id": str(user.id),
         "role": user.role,
         "exp": expire,
     }
@@ -49,6 +51,7 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 
     return LoginResponse(
         access_token=token,
+        id=str(user.id),
         role=user.role,
         full_name=user.full_name,
     )
