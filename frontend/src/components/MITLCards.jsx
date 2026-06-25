@@ -7,7 +7,7 @@ const SEVERITY_STYLES = {
   low: { border: 'border-blue-400', bg: 'bg-blue-50', badge: 'bg-blue-600', label: 'Low' },
 }
 
-function RecommendationCard({ card, onEscalate, onAction, onViewHistory, onComment }) {
+function RecommendationCard({ card, onEscalate, onAction, onViewHistory, onComment, stale }) {
   const style = SEVERITY_STYLES[card.severity] || SEVERITY_STYLES.low
   const hasHistory = card.action_taken || card.reason_code || card.notes
 
@@ -135,6 +135,7 @@ export default function MITLCards({ onEscalate, onAction, onViewHistory, onComme
           onAction={onAction}
           onViewHistory={onViewHistory}
           onComment={onComment}
+          stale={card.distributor_id ? stalenessMap[card.distributor_id]?.is_stale : false}
         />
       ))}
     </div>
