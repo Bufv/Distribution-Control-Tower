@@ -4,9 +4,9 @@
 
 Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs Sell-out secara instan dengan Man-in-the-Loop Smart Recommendation Engine. Roadmap ini dibagi per-story, masing-masing dikerjakan di branch terpisah.
 
-**Depth:** Standard (8 phases — 7 completed, 1 pending)
+**Depth:** Standard (8 phases — 8 completed, 0 pending)
 **Coverage:** 8/8 phases mapped ✓
-**Overall Progress:** ~95%
+**Overall Progress:** ~100%
 
 ---
 
@@ -150,7 +150,7 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ## Phase 8: Graceful Degradation — Story 3.1
 
-**Status:** ⏳ PENDING
+**Status:** ✅ COMPLETE (100%)
 **Branch:** `story-3.1`
 **Dependencies:** `main` (independen — bisa paralel dengan phase lain)
 **Timeline:** Kapan saja (tidak memiliki dependency ke story lain)
@@ -186,10 +186,10 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | `main` | — | Phase 1, 2, 3 | ✅ Complete |
 | `story-2.1` | `main` | Phase 3 | ✅ Merged to `main` |
 | `story-auth` | `main` | Phase 4 | ✅ Merged to `main` |
-| `story-2.2` | `story-auth` | Phase 5 | ✅ Merged to `story-auth` |
+| `story-2.2` | `story-auth` | Phase 5 | ✅ Merged to `main` |
 | `story-4.1` | `story-2.2` | Phase 6 | ✅ Merged to `main` |
-| `story-4.2` | `story-2.2` | Phase 7 | ✅ Complete — branch aktif |
-| `story-3.1` | `main` | Phase 8 | ⏳ Pending |
+| `story-4.2` | `story-2.2` | Phase 7 | ✅ Complete — perlu PR ke `main` |
+| `story-3.1` | `main` | Phase 8 | ✅ Complete — perlu PR ke `main` |
 
 ---
 
@@ -207,8 +207,8 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | Story 2.2 — Escalate Button | Phase 5 | ✅ |
 | Story 4.1 — Justification Gateway | Phase 6 | ✅ |
 | Story 4.2 — Discussion Thread | Phase 7 | ✅ |
-| Story 3.1 — Graceful Degradation | Phase 8 | ⏳ |
+| Story 3.1 — Graceful Degradation | Phase 8 | ✅ |
 
 **Coverage:** 11/11 v1 requirements mapped ✓
-**Completed:** 10/11 ✓
-**Pending:** 1/11 ⏳
+**Completed:** 11/11 ✓
+**Pending:** 0/11
