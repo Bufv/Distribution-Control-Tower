@@ -37,6 +37,13 @@ async def main():
 
     record_count = await generate_data(scenario_class, scenario_label)
 
+    # Verification check — bandingkan baseline vs outcome untuk executed tactics
+    from app.services.verifier import run_verification_cycle
+    async with async_session() as db:
+        verified_count = await run_verification_cycle(db)
+        if verified_count:
+            print(f"[data-generator] Verifikasi: {verified_count} tactic dicek")
+
     print(f"[data-generator] Selesai — {record_count} record tersimpan ({scenario_label})")
 
 

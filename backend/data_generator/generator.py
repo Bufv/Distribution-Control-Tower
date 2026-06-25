@@ -1,6 +1,7 @@
 """Data generator — menyisipkan data dummy ke PostgreSQL sesuai skenario aktif."""
 
 import random
+import logging
 from datetime import date, timedelta, datetime
 from typing import List, Type
 
@@ -18,9 +19,11 @@ from app.models.escalation import EscalationTicket
 from app.models.audit_trail import AuditTrail
 from app.models.comment import Comment
 from app.models.notification import Notification
+from app.models.tactic import Tactic
 
 from data_generator.scenarios import pick_scenario
 
+logger = logging.getLogger(__name__)
 
 SEED_DATA_DISTRIBUTORS: List[dict] = [
     {"code": "DTR-JKT-01", "name": "Distributor Jakarta Pusat", "region": "Jawa Barat", "city": "Jakarta"},
@@ -31,11 +34,11 @@ SEED_DATA_DISTRIBUTORS: List[dict] = [
 ]
 
 SEED_DATA_SKU: List[dict] = [
-    {"code": "SKU-001", "name": "Mie Instan Rasa Original", "category": "Mie Instan", "unit": "karton"},
-    {"code": "SKU-002", "name": "Mie Instan Rasa Ayam", "category": "Mie Instan", "unit": "karton"},
-    {"code": "SKU-003", "name": "Minuman Teh Botol 500ml", "category": "Minuman", "unit": "karton"},
-    {"code": "SKU-004", "name": "Minuman Kopi Sachet", "category": "Minuman", "unit": "karton"},
-    {"code": "SKU-005", "name": "Biskuit Coklat 200g", "category": "Biskuit", "unit": "karton"},
+    {"code": "SKU-001", "name": "Mie Instan Rasa Original", "category": "Mie Instan", "unit": "karton", "unit_price": 35000},
+    {"code": "SKU-002", "name": "Mie Instan Rasa Ayam", "category": "Mie Instan", "unit": "karton", "unit_price": 35000},
+    {"code": "SKU-003", "name": "Minuman Teh Botol 500ml", "category": "Minuman", "unit": "karton", "unit_price": 55000},
+    {"code": "SKU-004", "name": "Minuman Kopi Sachet", "category": "Minuman", "unit": "karton", "unit_price": 45000},
+    {"code": "SKU-005", "name": "Biskuit Coklat 200g", "category": "Biskuit", "unit": "karton", "unit_price": 70000},
 ]
 
 DAYS_TO_GENERATE = 7
@@ -66,7 +69,7 @@ async def seed_master_data(db: AsyncSession) -> tuple[List[Distributor], List[Sk
 
 
 async def generate_data(scenario_class: Type, scenario_label: str) -> int:
-    """Generate data harian — cari tanggal terakhir, lanjut dari sana agar akumulasi."""
+    """Generate data harian dengan context-aware adjustment dari tactics."""
 
     async with async_session() as db:
         await db.execute(delete(Notification))
@@ -74,7 +77,7 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
         await db.execute(delete(AuditTrail))
         await db.execute(delete(Comment))
         await db.execute(delete(PromoCalendar))
-        await db.execute(delete(RecommendationCard))
+        await db.execute(delete(RecommendationCard).where(RecommendationCard.status == 'pending'))
         await db.commit()
 
         distributors, skus = await seed_master_data(db)
@@ -82,6 +85,20 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
         result = await db.execute(select(func.max(DailySales.date)))
         max_date = result.scalar()
         start_date = (max_date + timedelta(days=1)) if max_date else ORIGIN_DATE
+
+        # Load context-aware adjustments from executed tactics
+        try:
+            tactic_result = await db.execute(
+                select(Tactic).where(
+                    Tactic.status == 'executed',
+                    Tactic.verification_status.is_(None),
+                    Tactic.expected_metric.isnot(None),
+                )
+            )
+            active_tactics = tactic_result.scalars().all()
+        except Exception:
+            active_tactics = []
+            logger.warning("Could not load tactics for context-aware adjustment")
 
         record_count = 0
 
@@ -98,11 +115,34 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
                 base_sell_in = random.randint(*BASE_SELL_IN_RANGE)
                 base_sell_out = random.randint(*BASE_SELL_OUT_RANGE)
 
+                params = scenario_class.generate_params(0)
+
                 for day_offset in range(DAYS_TO_GENERATE):
                     current_date = start_date + timedelta(days=day_offset)
 
-                    sell_in = scenario_class.generate_sell_in(base_sell_in, day_offset)
-                    sell_out = scenario_class.generate_sell_out(base_sell_out, day_offset, running_inventory)
+                    # Get scenario params for this distributor
+                    dist_code = distributor.code
+                    if dist_code in params:
+                        p = params[dist_code]
+                        sell_in = int(p["sell_in"] * (1 + random.uniform(-0.05, 0.05)))
+                        sell_out = int(p["sell_out"] * (1 + random.uniform(-0.05, 0.05)))
+                    else:
+                        sell_in = scenario_class.generate_sell_in(base_sell_in, day_offset)
+                        sell_out = scenario_class.generate_sell_out(base_sell_out, day_offset, running_inventory)
+
+                    # Apply context-aware adjustment from active tactics
+                    for tactic in active_tactics:
+                        if (tactic.distributor_id == distributor.id
+                                and tactic.sku_id == sku.id
+                                and tactic.expected_metric == "sell_in"
+                                and tactic.expected_direction == "decrease"):
+                            sell_in = int(sell_in * (1 - (tactic.expected_change_pct or 0) * 0.7))
+                        if (tactic.distributor_id == distributor.id
+                                and tactic.sku_id == sku.id
+                                and tactic.expected_metric == "inventory"
+                                and tactic.expected_direction == "increase"):
+                            sell_in = int(sell_in * 1.3)
+
                     running_inventory = running_inventory + sell_in - sell_out
                     running_inventory = max(running_inventory, 0)
 
@@ -133,71 +173,37 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
             discount_rate=15.00,
         ))
 
-        if scenario_label == "channel_stuffing":
-            for distributor in distributors:
-                inv = (await db.execute(
-                    select(InventorySnapshot).where(
-                        InventorySnapshot.distributor_id == distributor.id
-                    ).order_by(InventorySnapshot.snapshot_date.desc()).limit(1)
-                )).scalar_one_or_none()
-
-                if inv and inv.current_stock > 500:
-                    db.add(RecommendationCard(
-                        title=f"Overstock Terdeteksi — {distributor.name}",
-                        description=(
-                            f"Stok di {distributor.name} mencapai {inv.current_stock} unit, "
-                            "melebihi batas amat 30 hari. Risiko barang kedaluwarsa tinggi."
-                        ),
-                        recommendation_type="overstock",
-                        severity="high",
-                        distributor_id=distributor.id,
-                        region=distributor.region,
-                    ))
-
-        if scenario_label == "stockout":
-            for distributor in distributors:
-                inv = (await db.execute(
-                    select(InventorySnapshot).where(
-                        InventorySnapshot.distributor_id == distributor.id
-                    ).order_by(InventorySnapshot.snapshot_date.desc()).limit(1)
-                )).scalar_one_or_none()
-
-                if inv and inv.current_stock == 0:
-                    db.add(RecommendationCard(
-                        title=f"Stockout — {distributor.name}",
-                        description=(
-                            f"Stok {distributor.name} habis (0 unit). Potensi kehilangan penjualan. "
-                            "Segera alokasikan pengiriman darurat."
-                        ),
-                        recommendation_type="stockout",
-                        severity="high",
-                        distributor_id=distributor.id,
-                        region=distributor.region,
-                    ))
-
-        if scenario_label == "normal":
-            for distributor in distributors:
-                for sku in skus:
-                    sales = (await db.execute(
-                        select(DailySales).where(
-                            DailySales.distributor_id == distributor.id,
-                            DailySales.sku_id == sku.id,
-                        ).order_by(DailySales.date.desc()).limit(1)
-                    )).scalar_one_or_none()
-
-                    if sales and (sales.sell_in_qty - sales.sell_out_qty) > 30:
-                        db.add(RecommendationCard(
-                            title=f"Channel Stuffing Terindikasi — {distributor.name}",
-                            description=(
-                                f"Selisih sell-in vs sell-out di {distributor.name} mencapai "
-                                f"{sales.sell_in_qty - sales.sell_out_qty} unit. "
-                                "Periksa aktivitas distributor."
-                            ),
-                            recommendation_type="channel_stuffing",
-                            severity="medium",
-                            distributor_id=distributor.id,
-                            region=distributor.region,
-                        ))
+        # Generate recommendation cards from scenario
+        try:
+            recs = scenario_class.generate_recommendations(distributors, skus, start_date)
+            for rec in recs:
+                db.add(RecommendationCard(
+                    title=rec["title"],
+                    description=rec["description"],
+                    recommendation_type=rec["recommendation_type"],
+                    severity=rec["severity"],
+                    distributor_id=rec["distributor_id"],
+                    sku_id=rec.get("sku_id"),
+                    region=rec["region"],
+                    status="pending",
+                    financial_impact=rec.get("financial_impact"),
+                    suggest_escalate=rec.get("suggest_escalate", False),
+                    expected_metric=rec.get("expected_metric"),
+                    expected_direction=rec.get("expected_direction"),
+                    expected_change_pct=rec.get("expected_change_pct"),
+                ))
+        except Exception as e:
+            logger.warning(f"Could not generate recommendations: {e}")
 
         await db.commit()
+
+        # Run verification cycle
+        try:
+            from app.services.verifier import run_verification_cycle
+            verified = await run_verification_cycle(db)
+            if verified:
+                logger.info(f"Verification: {verified} tactics checked")
+        except Exception as e:
+            logger.warning(f"Verification cycle skipped: {e}")
+
         return record_count

@@ -8,18 +8,29 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]))
-        setUser({
-          username: payload.sub,
-          role: payload.role,
-        })
-      } catch {
-        localStorage.removeItem('token')
-      }
+    if (!token) {
+      setLoading(false)
+      return
     }
-    setLoading(false)
+    fetch('/api/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Invalid token')
+        return res.json()
+      })
+      .then(data => {
+        setUser({
+          id: data.id,
+          username: data.username,
+          role: data.role,
+          full_name: data.full_name,
+        })
+      })
+      .catch(() => {
+        localStorage.removeItem('token')
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const login = async (username, password) => {
@@ -35,6 +46,7 @@ export function AuthProvider({ children }) {
     const data = await res.json()
     localStorage.setItem('token', data.access_token)
     setUser({
+      id: data.id,
       username: data.username || username,
       role: data.role,
       full_name: data.full_name,

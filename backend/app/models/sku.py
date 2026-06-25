@@ -14,5 +14,6 @@ class SkuCatalog(Base):
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     category: Mapped[str | None] = mapped_column(String(100))
     unit: Mapped[str] = mapped_column(String(20), default="pcs")
+    unit_price: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -4,13 +4,14 @@ import { api } from './api'
 import LoginPage from './LoginPage'
 import SellInSellOutChart from './components/SellInSellOutChart'
 import StockHealthCards from './components/StockHealthCards'
-import RegionalTable from './components/RegionalTable'
-import MITLCards from './components/MITLCards'
+import SystemRecommendations from './components/SystemRecommendations'
 import PromoForm from './components/PromoForm'
 import EscalationPanel from './components/EscalationPanel'
 import NotificationsDropdown from './components/NotificationsDropdown'
 import InventoryPage from './components/InventoryPage'
 import MITLDetailModal from './components/MITLDetailModal'
+import CommercialActionPlan from './components/CommercialActionPlan'
+import Archive from './components/Archive'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -23,9 +24,9 @@ function Dashboard() {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard' },
+    { id: 'action-plan', label: 'Commercial Action Plan' },
     { id: 'inventory', label: 'Inventory Health' },
-    { id: 'mitl', label: 'MITL Action Center' },
-    { id: 'regional', label: 'Regional Reports' },
+    { id: 'archive', label: 'Archive' },
   ]
 
   useEffect(() => {
@@ -49,11 +50,10 @@ function Dashboard() {
           {navItems.map(item => (
             <button
               key={item.id}
-              onClick={() => item.id !== 'mitl' && item.id !== 'regional' && setActiveTab(item.id)}
+              onClick={() => setActiveTab(item.id)}
               className={`block w-full text-left px-3 py-2 rounded ${
                 activeTab === item.id ? 'bg-gray-700' : 'hover:bg-gray-700'
-              } ${item.id === 'mitl' || item.id === 'regional' ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={item.id === 'mitl' || item.id === 'regional'}
+              }`}
             >
               {item.label}
             </button>
@@ -91,32 +91,32 @@ function Dashboard() {
             </div>
 
             <SellInSellOutChart />
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <StockHealthCards />
-              </div>
-              <div>
-                <RegionalTable />
-              </div>
-            </div>
+            <StockHealthCards />
           </div>
+        )}
+
+        {activeTab === 'action-plan' && (
+          <CommercialActionPlan user={user} />
         )}
 
         {activeTab === 'inventory' && (
           <InventoryPage />
         )}
+
+        {activeTab === 'archive' && (
+          <Archive user={user} />
+        )}
       </main>
 
       <aside className="w-80 bg-white border-l p-4 hidden lg:flex flex-col shrink-0">
         <h3 className="font-semibold text-sm uppercase tracking-wide text-gray-500 mb-4">
-          {isDirector ? 'Escalation Panel' : 'Tactic Panel'}
+          {isDirector ? 'Escalation Panel' : 'System Recommendations'}
         </h3>
         <div className="flex-1 overflow-y-auto">
           {isDirector ? (
             <EscalationPanel user={user} />
           ) : (
-            <MITLCards onDetail={setDetailCard} />
+            <SystemRecommendations onModifyCard={setDetailCard} />
           )}
         </div>
       </aside>

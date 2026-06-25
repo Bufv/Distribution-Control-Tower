@@ -7,8 +7,7 @@ Rumus PRD:
   Seasonally Adjusted = daily_demand * Ws (weighting factor, default 1.0)
 """
 
-from datetime import date, timedelta
-from typing import Optional
+from datetime import timedelta
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,17 +20,16 @@ async def calculate_doi(
     db: AsyncSession,
     distributor_id,
     sku_id,
-    snapshot_date: Optional[date] = None,
     ws: float = 1.0,
 ) -> dict:
     """Hitung DOI untuk satu distributor x SKU."""
 
-    if snapshot_date is None:
-        snapshot_date = date.today()
-
-    # Cari current stock dari inventory_snapshots terbaru
+    # Cari current stock & snapshot_date dari inventory_snapshots terbaru
     inv_result = await db.execute(
-        select(InventorySnapshot.current_stock)
+        select(
+            InventorySnapshot.current_stock,
+            InventorySnapshot.snapshot_date,
+        )
         .where(
             InventorySnapshot.distributor_id == distributor_id,
             InventorySnapshot.sku_id == sku_id,
@@ -39,11 +37,14 @@ async def calculate_doi(
         .order_by(InventorySnapshot.snapshot_date.desc())
         .limit(1)
     )
-    current_stock = inv_result.scalar_one_or_none()
-    if current_stock is None or current_stock == 0:
+    row = inv_result.one_or_none()
+    if row is None or row.current_stock is None or row.current_stock == 0:
         return {"doi": None, "current_stock": 0, "daily_demand": 0, "status": "out_of_stock"}
 
-    # Hitung daily demand = rata-rata sell_out 7 hari terakhir
+    current_stock = row.current_stock
+    snapshot_date = row.snapshot_date
+
+    # Hitung daily demand = rata-rata sell_out 7 hari sebelum snapshot_date
     seven_days_ago = snapshot_date - timedelta(days=7)
     demand_result = await db.execute(
         select(func.coalesce(func.avg(DailySales.sell_out_qty), 0))
