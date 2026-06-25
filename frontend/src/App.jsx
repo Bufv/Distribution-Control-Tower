@@ -10,6 +10,7 @@ import PromoForm from './components/PromoForm'
 import EscalateModal from './components/EscalateModal'
 import ActionModal from './components/ActionModal'
 import AuditTrailModal from './components/AuditTrailModal'
+import CommentModal from './components/CommentModal'
 import EscalationPanel from './components/EscalationPanel'
 import NotificationsDropdown from './components/NotificationsDropdown'
 
@@ -20,12 +21,14 @@ function Dashboard() {
   const [escalateCard, setEscalateCard] = useState(null)
   const [actionCard, setActionCard] = useState(null)
   const [auditCard, setAuditCard] = useState(null)
+  const [commentCard, setCommentCard] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   const isDirector = user?.role === 'director'
 
   const handleAction = (card, action) => setActionCard({ card, action })
   const handleViewHistory = (card) => setAuditCard(card)
+  const handleComment = (card) => setCommentCard(card)
   const handleActionDone = () => setRefreshKey(k => k + 1)
 
   useEffect(() => {
@@ -107,6 +110,7 @@ function Dashboard() {
               onEscalate={setEscalateCard}
               onAction={handleAction}
               onViewHistory={handleViewHistory}
+              onComment={handleComment}
             />
           )}
         </div>
@@ -126,6 +130,9 @@ function Dashboard() {
       )}
       {auditCard && (
         <AuditTrailModal card={auditCard} onClose={() => setAuditCard(null)} />
+      )}
+      {commentCard && (
+        <CommentModal card={commentCard} onClose={() => setCommentCard(null)} />
       )}
     </div>
   )

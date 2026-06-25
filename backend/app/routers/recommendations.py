@@ -1,3 +1,4 @@
+import re
 import uuid
 from datetime import date, timedelta, datetime
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +13,9 @@ from app.models.daily_sales import DailySales
 from app.models.distributor import Distributor
 from app.models.promo import PromoCalendar
 from app.models.audit_trail import AuditTrail
+from app.models.comment import Comment
+from app.models.notification import Notification
+from app.models.user import User
 
 router = APIRouter(prefix="/api/recommendations", tags=["Recommendations"])
 
@@ -27,6 +31,10 @@ class ActionRequest(BaseModel):
     action: str
     reason_code: str
     notes: str
+
+
+class CommentRequest(BaseModel):
+    content: str
 
 
 @router.get("")
@@ -159,4 +167,90 @@ async def take_action(
         "card_id": card_id,
         "action": body.action,
         "message": f"Card {body.action}ed with reason: {body.reason_code}",
+    }
+
+
+@router.get("/{card_id}/comments")
+async def list_comments(
+    card_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        uid = uuid.UUID(card_id)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid card ID format")
+
+    card = await db.get(RecommendationCard, uid)
+    if not card:
+        raise HTTPException(404, detail="Recommendation card not found")
+
+    result = await db.execute(
+        select(Comment)
+        .where(Comment.recommendation_card_id == uid)
+        .order_by(Comment.created_at.asc())
+    )
+    comments = result.scalars().all()
+
+    return [
+        {
+            "id": str(c.id),
+            "user_id": c.user_id,
+            "content": c.content,
+            "created_at": c.created_at.isoformat() if c.created_at else None,
+        }
+        for c in comments
+    ]
+
+
+@router.post("/{card_id}/comments")
+async def create_comment(
+    card_id: str,
+    body: CommentRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    try:
+        uid = uuid.UUID(card_id)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid card ID format")
+
+    card = await db.get(RecommendationCard, uid)
+    if not card:
+        raise HTTPException(404, detail="Recommendation card not found")
+
+    if not body.content or not body.content.strip():
+        raise HTTPException(400, detail="Content cannot be empty")
+
+    comment = Comment(
+        recommendation_card_id=uid,
+        user_id=current_user.get("username") or current_user.get("full_name"),
+        content=body.content.strip(),
+    )
+    db.add(comment)
+    await db.flush()
+
+    mentioned = set(re.findall(r"@(\w+)", body.content))
+    if mentioned:
+        users = (
+            await db.execute(select(User).where(User.username.in_(mentioned)))
+        ).scalars().all()
+        for user in users:
+            if str(user.id) != current_user.get("id"):
+                db.add(Notification(
+                    user_id=user.id,
+                    message=f"{current_user.get('username') or current_user.get('full_name')} mentioned you in a comment on \"{card.title}\"",
+                    related_entity_type="comment",
+                    related_entity_id=comment.id,
+                ))
+
+    await db.commit()
+
+    return {
+        "status": "ok",
+        "comment": {
+            "id": str(comment.id),
+            "user_id": comment.user_id,
+            "content": comment.content,
+            "created_at": comment.created_at.isoformat() if comment.created_at else None,
+        },
     }

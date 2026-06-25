@@ -9,7 +9,7 @@ const SEVERITY_STYLES = {
   low: { border: 'border-blue-400', bg: 'bg-blue-50', badge: 'bg-blue-600', label: 'Low' },
 }
 
-function RecommendationCard({ card, onEscalate, onAction, onViewHistory, stale }) {
+function RecommendationCard({ card, onEscalate, onAction, onViewHistory, onComment }) {
   const style = SEVERITY_STYLES[card.severity] || SEVERITY_STYLES.low
   const hasHistory = card.action_taken || card.reason_code || card.notes
 
@@ -72,6 +72,12 @@ function RecommendationCard({ card, onEscalate, onAction, onViewHistory, stale }
         >
           Escalate
         </button>
+        <button
+          onClick={() => onComment(card)}
+          className="flex-1 text-xs py-1.5 rounded font-medium border border-gray-300 text-gray-700 hover:bg-gray-100"
+        >
+          Comment
+        </button>
       </div>
 
       {hasHistory && (
@@ -92,7 +98,7 @@ function RecommendationCard({ card, onEscalate, onAction, onViewHistory, stale }
   )
 }
 
-export default function MITLCards({ onEscalate, onAction, onViewHistory }) {
+export default function MITLCards({ onEscalate, onAction, onViewHistory, onComment }) {
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
   const { stalenessMap } = useStaleness()
@@ -137,7 +143,7 @@ export default function MITLCards({ onEscalate, onAction, onViewHistory }) {
           onEscalate={onEscalate}
           onAction={onAction}
           onViewHistory={onViewHistory}
-          stale={card.distributor_id ? stalenessMap[card.distributor_id]?.is_stale : false}
+          onComment={onComment}
         />
       ))}
     </div>
