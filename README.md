@@ -85,14 +85,6 @@ bash run.sh cron
 | GET | `/api/inventory` | Stock health + DOI per distributor |
 | GET | `/api/regions/ranking` | Ranking region by sell-out |
 
-## Status Proyek
-
-| Fase | Deliverable | Status |
-|---|---|---|
-| Minggu 1–2 | Infrastruktur + DB + Data Generator | ✅ Selesai |
-| Minggu 3–4 | Executive Dashboard (Epic 1) | ✅ Selesai |
-| Minggu 5–6 | MITL Engine (Epic 2) | ⏳ Belum |
-| Minggu 7–8 | Kolaborasi + Data Governance (Epic 3.1 + Epic 4) | ⏳ Belum |
 
 ---
 
