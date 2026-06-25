@@ -23,6 +23,7 @@
 | 2026-06-24 | opencode | Phase 6: Story 4.1 — Justification Gateway (Reason Code + Notes gate, audit trail API, panel review) | Eksekusi Epic 4 Contextual Collaboration — justification gateway |
 | 2026-06-25 | opencode | Phase 7: Story 4.2 — Discussion Thread (GET/POST comments, @mention → notification, CommentModal) | Eksekusi Epic 4 Contextual Collaboration — discussion thread |
 | 2026-06-25 | opencode | Phase 8: Story 3.1 — Graceful Degradation (staleness endpoint, yellow accent + tooltip on stale data) | Eksekusi Epic 3 Data Governance — graceful degradation |
+| 2026-06-25 | opencode | Phase 9: UI Enhancement — stock angka aktual, MITL Detail Modal (konsolidasi 4 modal), halaman Inventory Health terpisah, sidebar navigasi aktif | Enhancement pasca-MVP untuk visibilitas stok & UX |
 
 ---
 
@@ -75,6 +76,7 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
   - 🟢 _Healthy Stock_ (DOI 14–30 hari)
   - 🟡 _Understock / OOS Risk_ (DOI < 14 hari)
 - [AC 1.2.2] DOI dihitung menggunakan rumus: `Current Inventory / Seasonally Adjusted Forecasted Daily Demand`.
+- [AC 1.2.3] Setiap kartu menampilkan total stok aktual (dalam unit) di samping indikator kesehatan. Klik kartu atau navigasi ke halaman Inventory Health untuk melihat breakdown per-SKU dengan stok, DOI, dan status masing-masing.
 
 **Story 1.3 — Regional Penetration Map (Ditunda)**
 > ❌ **OUT OF SCOPE MVP.** Fitur peta interaktif Indonesia tidak masuk rilis pertama. Akan diganti dengan tabel ranking region sederhana berdasarkan volume _sell-out_.
@@ -125,6 +127,22 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
 - [AC 4.2.1] Di bagian bawah setiap kartu terdapat _thread_ komentar (flat, tanpa nested reply).
 - [AC 4.2.2] Mention user dengan format `@username` — menampilkan notifikasi (tanpa email).
 - [AC 4.2.3] Tidak ada tagging dengan pertanyaan preset (cukup free-text biasa).
+
+#### Epic 5: UI Enhancement & Stock Visibility
+
+**Story 5.1 — Inventory Health Page**
+> Sebagai Supply Chain Director, saya ingin halaman khusus untuk memantau stok per distributor per SKU sehingga saya bisa melakukan analisis mendalam tanpa mengganggu dashboard utama.
+
+- [AC 5.1.1] Sidebar navigasi memiliki tab "Inventory Health" yang aktif dan dapat diklik.
+- [AC 5.1.2] Halaman menampilkan dropdown filter distributor dan tabel detail stok per-SKU (SKU Name, Category, Current Stock, DOI, Daily Demand, Status Health).
+- [AC 5.1.3] Data stok dihitung real-time dari tabel `inventory_snapshots` via endpoint `GET /api/inventory/detail`.
+
+**Story 5.2 — MITL Detail Modal (Consolidated)**
+> Sebagai National Sales Manager, saya ingin melihat informasi lengkap rekomendasi, data stok terkait, dan semua aksi dalam satu modal sehingga saya tidak perlu membuka beberapa modal terpisah.
+
+- [AC 5.2.1] Setiap kartu rekomendasi hanya memiliki satu tombol aksi: `[Lihat Detail]`.
+- [AC 5.2.2] Modal detail menampilkan: header kartu, deskripsi penuh, tabel inventory terkait, action buttons (Modify/Reject/Escalate dengan justification gate), thread diskusi, dan riwayat audit.
+- [AC 5.2.3] Semua aksi (Modify/Reject/Escalate/Comment) dapat dilakukan dari dalam modal tanpa harus membuka modal lain.
 
 ### Non-Goals (Out of Scope — MVP)
 
@@ -224,8 +242,10 @@ Pusat komando taktis berbasis web yang menyajikan perbandingan _Sell-in vs Sell-
 | Story 4.1 — Justification Gateway (Reason Code + Notes) | Phase 6 | `story-4.1` | ✅ Complete |
 | Story 4.2 — In-Context Discussion Thread | Phase 7 | `story-4.2` | ✅ Complete |
 | Story 3.1 — Graceful Degradation on UI | Phase 8 | `story-3.1` | ✅ Complete |
+| Story 5.1 — Inventory Health Page | Phase 9 | `main` (enhancement) | 🚧 In Progress |
+| Story 5.2 — MITL Detail Modal (Consolidated) | Phase 9 | `main` (enhancement) | 🚧 In Progress |
 
-**Coverage:** 11/11 v1 requirements mapped ✓ | **Completed:** 11/11 | **Pending:** 0/11
+**Coverage:** 13/13 requirements mapped ✓ | **Completed:** 11/13 | **Pending:** 2/13 (Phase 9)
 
 ---
 

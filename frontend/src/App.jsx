@@ -7,29 +7,26 @@ import StockHealthCards from './components/StockHealthCards'
 import RegionalTable from './components/RegionalTable'
 import MITLCards from './components/MITLCards'
 import PromoForm from './components/PromoForm'
-import EscalateModal from './components/EscalateModal'
-import ActionModal from './components/ActionModal'
-import AuditTrailModal from './components/AuditTrailModal'
-import CommentModal from './components/CommentModal'
 import EscalationPanel from './components/EscalationPanel'
 import NotificationsDropdown from './components/NotificationsDropdown'
+import InventoryPage from './components/InventoryPage'
+import MITLDetailModal from './components/MITLDetailModal'
 
 function Dashboard() {
   const { user, logout } = useAuth()
+  const [activeTab, setActiveTab] = useState('dashboard')
   const [backendStatus, setBackendStatus] = useState('checking...')
   const [showPromoForm, setShowPromoForm] = useState(false)
-  const [escalateCard, setEscalateCard] = useState(null)
-  const [actionCard, setActionCard] = useState(null)
-  const [auditCard, setAuditCard] = useState(null)
-  const [commentCard, setCommentCard] = useState(null)
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [detailCard, setDetailCard] = useState(null)
 
   const isDirector = user?.role === 'director'
 
-  const handleAction = (card, action) => setActionCard({ card, action })
-  const handleViewHistory = (card) => setAuditCard(card)
-  const handleComment = (card) => setCommentCard(card)
-  const handleActionDone = () => setRefreshKey(k => k + 1)
+  const navItems = [
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'inventory', label: 'Inventory Health' },
+    { id: 'mitl', label: 'MITL Action Center' },
+    { id: 'regional', label: 'Regional Reports' },
+  ]
 
   useEffect(() => {
     api('/api/health')
@@ -49,10 +46,18 @@ function Dashboard() {
         </div>
 
         <nav className="space-y-2 flex-1">
-          <a href="#" className="block px-3 py-2 rounded bg-gray-700">Dashboard</a>
-          <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">Inventory Health</a>
-          <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">MITL Action Center</a>
-          <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">Regional Reports</a>
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => item.id !== 'mitl' && item.id !== 'regional' && setActiveTab(item.id)}
+              className={`block w-full text-left px-3 py-2 rounded ${
+                activeTab === item.id ? 'bg-gray-700' : 'hover:bg-gray-700'
+              } ${item.id === 'mitl' || item.id === 'regional' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={item.id === 'mitl' || item.id === 'regional'}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
 
         <div className="mt-auto pt-4 border-t border-gray-700 text-xs text-gray-400 space-y-2">
@@ -76,25 +81,31 @@ function Dashboard() {
       </aside>
 
       <main className="flex-1 p-6 overflow-y-auto">
-        <div className="max-w-6xl mx-auto space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900">Executive Dashboard</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Pusat komando distribusi nasional — real-time sell-in vs sell-out
-            </p>
-          </div>
-
-          <SellInSellOutChart />
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <StockHealthCards />
-            </div>
+        {activeTab === 'dashboard' && (
+          <div className="max-w-6xl mx-auto space-y-6">
             <div>
-              <RegionalTable />
+              <h2 className="text-2xl font-semibold text-gray-900">Executive Dashboard</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                Pusat komando distribusi nasional — real-time sell-in vs sell-out
+              </p>
+            </div>
+
+            <SellInSellOutChart />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <StockHealthCards />
+              </div>
+              <div>
+                <RegionalTable />
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === 'inventory' && (
+          <InventoryPage />
+        )}
       </main>
 
       <aside className="w-80 bg-white border-l p-4 hidden lg:flex flex-col shrink-0">
@@ -105,35 +116,13 @@ function Dashboard() {
           {isDirector ? (
             <EscalationPanel user={user} />
           ) : (
-            <MITLCards
-              key={refreshKey}
-              onEscalate={setEscalateCard}
-              onAction={handleAction}
-              onViewHistory={handleViewHistory}
-              onComment={handleComment}
-            />
+            <MITLCards onDetail={setDetailCard} />
           )}
         </div>
       </aside>
 
       {showPromoForm && <PromoForm onClose={() => setShowPromoForm(false)} />}
-      {escalateCard && (
-        <EscalateModal card={escalateCard} onClose={() => setEscalateCard(null)} />
-      )}
-      {actionCard && (
-        <ActionModal
-          card={actionCard.card}
-          action={actionCard.action}
-          onClose={() => setActionCard(null)}
-          onDone={handleActionDone}
-        />
-      )}
-      {auditCard && (
-        <AuditTrailModal card={auditCard} onClose={() => setAuditCard(null)} />
-      )}
-      {commentCard && (
-        <CommentModal card={commentCard} onClose={() => setCommentCard(null)} />
-      )}
+      {detailCard && <MITLDetailModal card={detailCard} onClose={() => setDetailCard(null)} />}
     </div>
   )
 }

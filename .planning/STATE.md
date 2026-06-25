@@ -5,14 +5,14 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** MVP complete — semua 11 requirement ✅ — semua branch sudah di-merge ke `main`
+- **Current Focus:** Phase 9 enhancement — stock visibility, MITL Detail Modal, Inventory Health tab 🚧
 
 ## Current Position
 
-- **Phase:** 8 (Graceful Degradation — Story 3.1) — ✅ Complete
-- **Plan:** ROADMAP.md — semua phase selesai
-- **Status:** Semua MVP stories (11/11) complete
-- **Progress:** ████████████ 100%
+- **Phase:** 9 (UI Enhancement & Stock Visibility) — 🚧 In Progress
+- **Plan:** ROADMAP.md — Phase 9 enhancement sedang dikerjakan
+- **Status:** MVP (11/11) complete ✅ — Enhancement (2/13) in progress 🚧
+- **Progress:** ██████████░░ 85%
 
 ## Performance Metrics
 
@@ -38,6 +38,8 @@
 
 Semua branch sudah di-merge ke `main` — MVP 100% terintegrasi.
 
+- **Phase 9 (enhancement, in progress):** UI Enhancement — angka stok aktual di StockHealthCards, endpoint `GET /api/inventory/detail` untuk breakdown per-SKU, halaman Inventory Health terpisah dengan filter distributor, MITL Detail Modal (konsolidasi ActionModal/EscalateModal/AuditTrailModal/CommentModal jadi 1), sidebar navigasi aktif (Dashboard + Inventory Health).
+
 ### Key Decisions
 
 - Story 1.3 (Regional Penetration Map) **OUT OF SCOPE MVP** — diganti tabel ranking region
@@ -46,15 +48,17 @@ Semua branch sudah di-merge ke `main` — MVP 100% terintegrasi.
 - Notifikasi in-app only — tanpa integrasi email/SMS/WhatsApp
 - Rule-based engine (IF-THEN) — tanpa ML/AI
 - Seasonality Weighting (Ws) dari tabel lookup manual via CSV
+- Enhancement Phase 9 dikerjakan di branch `story-5` (terpisah dari `main`)
+- MITL Detail Modal menggantikan 4 modal terpisah — ActionModal, EscalateModal, AuditTrailModal, CommentModal dihapus
+- Inventory Health tab menggunakan conditional rendering (tanpa react-router), konsisten dengan pola yang ada
 
 ## Session Continuity
 
 ### Latest Update
 
-- **Action:** Semua branch MVP sudah di-merge ke `main` — 11/11 requirement terintegrasi penuh
-- **Merge PRs:**
-  - `dba4059` — Merge PR #6: `story-4.2` (Phase 7 — Discussion Thread)
-  - `735b93b` → `6208734` — Merge + re-apply PR #9: `story-3.1` (Phase 8 — Graceful Degradation)
+- **Action:** Memulai Phase 9 — UI Enhancement & Stock Visibility
+- **Planning:** 3 plan — Backend inventory detail endpoint → Stock visibility + Inventory tab → MITL Detail Modal
+- **Documentasi:** PRD, ROADMAP, STATE sudah diupdate sebagai sandaran sebelum eksekusi kode
 
 ### Related Files
 
