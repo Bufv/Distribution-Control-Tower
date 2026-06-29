@@ -13,6 +13,7 @@ router = APIRouter(prefix="/api/sales", tags=["Sales"])
 async def get_sales(
     period: str = Query("monthly", pattern="^(monthly|quarterly)$"),
     sku_id: str = Query(None),
+    distributor_id: str = Query(None),
     db: AsyncSession = Depends(get_db),
 ):
     """Sell-In vs Sell-Out data, aggregated by month or quarter."""
@@ -35,6 +36,8 @@ async def get_sales(
 
     if sku_id:
         query = query.where(DailySales.sku_id == sku_id)
+    if distributor_id:
+        query = query.where(DailySales.distributor_id == distributor_id)
 
     try:
         result = await db.execute(query)
@@ -50,6 +53,7 @@ async def get_sales(
             "period": str(row.period.date()) if hasattr(row.period, "date") else str(row.period),
             "sell_in": int(row.sell_in),
             "sell_out": int(row.sell_out),
+            "gap": int(row.sell_in) - int(row.sell_out),
         }
         for row in rows
     ]
