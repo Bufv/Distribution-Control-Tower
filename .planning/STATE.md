@@ -5,14 +5,14 @@
 - **Core Value:** Pusat komando taktis FMCG untuk deteksi ketimpangan distribusi secara instan dengan rekomendasi kolaboratif-finansial
 - **Tech Stack:** React + Vite + Tailwind CSS | Python FastAPI async | PostgreSQL
 - **Deployment:** Docker Compose (VPS tunggal)
-- **Current Focus:** Phase 10 — Commercial Action Plan & Tactic Workflow 🚧
+- **Current Focus:** Phase 11 — Data Integrity & Flow Rate Analysis 🚧
 
 ## Current Position
 
-- **Phase:** 10 (Commercial Action Plan & Tactic Workflow) — 🚧 In Progress
-- **Branch:** `story-10-action-plan`
-- **Status:** MVP (13/13) complete ✅ — Phase 10 (5/5) in progress 🚧
-- **Progress:** ██████████░░ 85%
+- **Phase:** 11 (Data Integrity & Flow Rate Analysis) — 🚧 In Progress
+- **Branch:** `fix/flow-rate-analysis`
+- **Status:** Phase 11 (2/3 stories complete) ✅ Story 11.1 done ✅ Story 11.2 done 🚧 Story 11.3 in progress
+- **Progress:** ████████████░ 95%
 
 ## Performance Metrics
 
@@ -36,58 +36,53 @@
 - **Phase 7 (story-4.2):** Discussion Thread — GET/POST /api/recommendations/{id}/comments endpoint dengan @mention → notification
 - **Phase 8 (story-3.1):** Graceful Degradation — GET /api/staleness endpoint, useStaleness hook + StaleTooltip
 - **Phase 9 (story-5):** UI Enhancement — stock angka aktual, Inventory Health page, MITL Detail Modal consolidated, sidebar active
+- **Phase 10 (story-10-action-plan):** Commercial Action Plan — Data generator upgrade, Tactic API + verifier, SystemRecommendations panel, kanban swimlane, archive tab
 
-### Phase 10 In Progress
+### Phase 11 In Progress
 
-- **Plan 01: Data Generator Upgrade** — ✅ Selesai. Scenarios realistis dengan financial_impact (SKU prices 35rb-70rb/karton), threshold escalation >= Rp 200jt, context-aware adjustment dari tactics.
-- **Plan 02: Backend Tactic API** — ✅ Selesai. Model Tactic dengan 20+ kolom, 11 endpoints (CRUD + workflow), verification service (bandingkan baseline vs outcome), auto-create tactic dari approve rekomendasi dan escalation.
-- **Plan 03: System Recommendations Panel** — ✅ Selesai. SystemRecommendations.jsx + RecommendationCardSimple.jsx. Card hilang setelah di-action. 3 tombol langsung: Approve/Modify/Reject.
-- **Plan 04: Commercial Action Plan Tab** — ✅ Selesai. CommercialActionPlan.jsx (5 swimlane: Draft/Submitted/Approved/Rejected/Executed). TacticCard.jsx. TacticDetailModal.jsx (3 mode + 4 tabs: detail/diskusi/riwayat/verifikasi).
-- **Plan 05: Archive + Layout Integration** — ✅ Selesai. Archive.jsx (table + filter). App.jsx (4 tab aktif). Main.js panggil verifier.
+- **Story 11.1 — Verifier Bug Fix** ✅ Complete (branch `fix/verifier-cutoff-bug`, merged to `main`)
+  - Root cause: `executed_at < datetime.utcnow() - 365days` tidak pernah match karena data mulai 2026-01-01
+  - Fix: Hapus cutoff filter; per-tactic `window_end > now` sudah cukup
+  - Fix redundant: Hapus panggilan `run_verification_cycle()` kedua di `main.py`
 
-### Bugs Fixed (Phase 10)
+- **Story 11.2 — Inventory Realism** ✅ Complete
+  - `generate_inventory` (scenarios.py): hapus factor ×0.8–1.0 → return base_stock langsung (data DB sinkron memory)
+  - `BASE_SELL_OUT_RANGE` (generator.py): ubah (70, 110) → (80, 120) seimbang dengan sell_in
+  - Tactic adjustment (generator.py): handle semua kombinasi metric×direction (sell_in ↑↓, sell_out ↑↓, inventory ↑↓, gap ↓)
 
-| Bug | Fix |
-|-----|-----|
-| Migration ID mismatch (004→005 chain putus) | down_revision `004_add_scenario_counter` → `004` |
-| `expected_change_pct * 100` nampil 2000% | Hapus `* 100` |
-| Modal muncul otomatis pas mount | `useState(null)` → `useState()` |
-| `isOwner` blokir Execute button | Relax ke `isManager` (any manager) |
-| `user.id` undefined di AuthContext | Panggil `/api/me` instead of JWT decode |
-| Login response missing `id` | Tambah `id` ke LoginResponse + JWT payload |
+- **Story 11.3 — Flow Rate Analysis UI** 🚧 In Progress
+  - Backend: tambah parameter `distributor_id` di `GET /api/sales`, filter query, field `gap` di response
+  - Frontend: tambah distributor dropdown di `SellInSellOutChart`, area chart merah untuk gap, total gap summary
 
 ### Key Decisions
 
-- Story 1.3 (Regional Penetration Map) **OUT OF SCOPE MVP** — diganti tabel ranking region (sekarang dihapus, tidak berguna)
+- Story 1.3 (Regional Penetration Map) **OUT OF SCOPE MVP** — diganti tabel ranking region (sekarang dihapus)
 - Story 3.2 (Manual Override untuk Ws) **OUT OF SCOPE MVP** — ditunda
 - Auth menggunakan JWT sederhana, 2 role (manager, director) — tanpa SSO/RBAC kompleks
 - Notifikasi in-app only — tanpa integrasi email/SMS/WhatsApp
 - Rule-based engine (IF-THEN) — tanpa ML/AI
-- **Phase 10:** MITL Card → System Recommendations (read-only panel). Tactic sebagai item kerja utama di tab Commercial Action Plan
-- **Lifecycle baru:** draft → submitted → approved/rejected → executed → verified (system-verified execution)
-- **Threshold escalation natural:** financial_impact >= Rp 200jt → suggest_escalate=true
-- **Data generator context-aware:** menyesuaikan data dengan tactic yang sedang di-execute
-- Regional Table dihapus dari dashboard (tidak memberikan value actionable)
-- Archive menggantikan tab Regional Reports
+- **Phase 10:** MITL Card → System Recommendations (read-only panel). Tactic sebagai item kerja utama
+- **Phase 11:** Verifier cutoff dihapus, bukan flip ke `>=`. Filter per-tactic `window_end > now` lebih tepat
+- **Phase 11:** Inventory realism — `generate_inventory` return base_stock, bukan rasio random
+- **Phase 11:** Flow rate analysis cukup ditambahkan ke chart yang sudah ada (tidak perlu komponen baru)
 
 ## Session Continuity
 
 ### Latest Update
 
-- **Action:** Implementasi Phase 10 — Commercial Action Plan & Tactic Workflow
-- **Scope:** 5 plan — Data generator upgrade → Tactic API → SystemRecommendations panel → Action Plan tab → Archive + Layout
-- **Branch:** `story-10-action-plan` (base `main`)
-- **Bugfixes:** 6 bugs fixed — migration ID, AuthContext `/api/me`, modal mount, execute relaksasi, expected_pct display, login id
-- **Pending operational:** Docker rebuild + E2E flow test
+- **Action:** Implementasi Phase 11 — Data Integrity & Flow Rate Analysis
+- **Scope:** 3 stories — Verifier bug fix → Inventory realism → Flow rate analysis UI
+- **Branch:** `fix/flow-rate-analysis` (base `main`)
+- **Status:** Story 11.1 ✅ (merged), Story 11.2 ✅, Story 11.3 🚧 (backend + frontend changes applied, pending verification)
+- **Pending:** E2E flow test, verify chart shows distributor filter + gap area
 
 ### Related Files
 
-- `.planning/ROADMAP.md` — Full roadmap with phase details
-- `.planning/phases/10-action-plan/` — PLAN.md files untuk 5 plans
-- `backend/app/models/tactic.py` — Tactic ORM model
-- `backend/app/routers/tactics.py` — Tactic API (11 endpoints)
-- `backend/app/services/verifier.py` — System-verified execution
-- `frontend/src/components/SystemRecommendations.jsx` — Panel rekomendasi
-- `frontend/src/components/CommercialActionPlan.jsx` — Kanban swimlane
-- `frontend/src/components/TacticDetailModal.jsx` — Full detail + form
-- `frontend/src/components/Archive.jsx` — Riwayat table
+- `.planning/ROADMAP.md` — Full roadmap with Phase 11
+- `.planning/phases/11-flow-rate-analysis/` — Plan docs
+- `backend/app/services/verifier.py` — Verifier fix
+- `backend/data_generator/main.py` — Redundant verifier call removed
+- `backend/data_generator/generator.py` — BASE_SELL_OUT range, tactic adjustment completeness
+- `backend/data_generator/scenarios.py` — generate_inventory fix
+- `backend/app/routers/sales.py` — distributor_id filter + gap field
+- `frontend/src/components/SellInSellOutChart.jsx` — Distributor dropdown + area chart gap

@@ -4,9 +4,9 @@
 
 Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs Sell-out secara instan dengan Man-in-the-Loop Smart Recommendation Engine. Roadmap ini dibagi per-story, masing-masing dikerjakan di branch terpisah.
 
-**Depth:** Standard (9 phases — 8 completed, 1 in progress)
-**Coverage:** 9/9 phases mapped ✓
-**Overall Progress:** ~90% (Phase 9 in progress)
+**Depth:** Standard (11 phases — 10 completed, 1 in progress)
+**Coverage:** 11/11 phases mapped ✓
+**Overall Progress:** ~95% (Phase 11 in progress)
 
 ---
 
@@ -213,6 +213,31 @@ Pusat komando taktis FMCG berbasis web yang menyajikan perbandingan Sell-in vs S
 
 ---
 
+## Phase 11: Data Integrity & Flow Rate Analysis
+
+**Status:** 🚧 IN PROGRESS
+**Branch:** `fix/flow-rate-analysis`
+**Timeline:** Post-Phase 10
+
+**Goal:** Memperbaiki bug verifier cutoff yang menyebabkan executed tactics memengaruhi data generator secara permanen, meningkatkan realisme simulasi inventory, dan memberikan alat analisis flow rate (sell-in vs sell-out per distributor) kepada manager.
+
+**Requirements:**
+- Story 11.1 — Verifier Cutoff Bug Fix ✅ (merged to main)
+- Story 11.2 — Inventory Realism Enhancement (generate_inventory, BASE_SELL_OUT range, tactic adjustment completeness)
+- Story 11.3 — Flow Rate Analysis UI (distributor filter di chart + gap visualization)
+
+**Success Criteria:**
+1. Verifier tidak lagi pakai cutoff 365 hari — per-tactic `window_end > now` sebagai timing mechanism ✅
+2. Data generator tidak panggil verifier dua kali per run ✅
+3. `generate_inventory` tidak mengubah nilai stok secara artifisial — data DB sinkron dengan memory
+4. Distribusi sell-in/sell-out seimbang (range sama) sehingga stok naik/turun secara natural
+5. Semua kombinasi metric × direction di tactic adjustment di-handle oleh data generator
+6. Manager dapat memfilter chart Sell-In vs Sell-Out per distributor
+7. Gap ditampilkan sebagai area merah eksplisit di chart untuk memudahkan analisis flow rate
+8. Total gap (unit) ditampilkan sebagai ringkasan di bawah chart
+
+---
+
 ## Dependency Graph
 
 ```
@@ -223,10 +248,11 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 │       └── story-4.2  (Phase 7)
 ├── story-3.1  (Phase 8 — independen, bisa paralel)
 ├── story-5  (Phase 9 — enhancement post-MVP)
-└── story-10-action-plan  (Phase 10 — Commercial Action Plan)
-    └── Wave 1: Data Generator + Tactic API (paralel)
-        └── Wave 2: SystemRecommendations + ActionPlan Tab (paralel)
-            └── Wave 3: Archive + Layout Integration
+├── story-10-action-plan  (Phase 10 — Commercial Action Plan)
+│   └── Wave 1: Data Generator + Tactic API (paralel)
+│       └── Wave 2: SystemRecommendations + ActionPlan Tab (paralel)
+│           └── Wave 3: Archive + Layout Integration
+└── fix/verifier-cutoff-bug / fix/flow-rate-analysis  (Phase 11 — post-MVP fixes + enhancement)
 ```
 
 ---
@@ -244,6 +270,8 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | `story-3.1` | `main` | Phase 8 | ✅ Merged to `main` |
 | `story-5` | `main` | Phase 9 | ✅ Complete |
 | `story-10-action-plan` | `main` | Phase 10 | ✅ Complete |
+| `fix/verifier-cutoff-bug` | `main` | Phase 11 | ✅ Merged to `main` |
+| `fix/flow-rate-analysis` | `main` | Phase 11 | 🚧 In Progress |
 
 ---
 
@@ -269,7 +297,10 @@ main  (Phase 1 + 2 + 3 — story-2.1 merged)
 | Story 10.3 — System Recommendations Panel | Phase 10 | ✅ |
 | Story 10.4 — Commercial Action Plan Tab | Phase 10 | ✅ |
 | Story 10.5 — Archive + Layout Final | Phase 10 | ✅ |
+| Story 11.1 — Verifier Bug Fix | Phase 11 | ✅ |
+| Story 11.2 — Inventory Realism | Phase 11 | ✅ |
+| Story 11.3 — Flow Rate Analysis UI | Phase 11 | 🚧 |
 
-**Coverage:** 18/18 requirements mapped ✓
-**Completed:** 18/18 ✓
-**Pending:** — (all phases complete)
+**Coverage:** 21/21 requirements mapped ✓
+**Completed:** 20/21 ✓
+**Pending:** 1 (Phase 11 - Story 11.3 — verification)

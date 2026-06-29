@@ -1,14 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { api } from '../api'
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  LineChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 
 export default function SellInSellOutChart() {
   const [data, setData] = useState([])
   const [skus, setSkus] = useState([])
+  const [distributors, setDistributors] = useState([])
   const [selectedSku, setSelectedSku] = useState('')
+  const [selectedDist, setSelectedDist] = useState('')
   const [period, setPeriod] = useState('monthly')
+
+  const distName = useMemo(
+    () => distributors.find(d => d.id === selectedDist)?.name || '',
+    [distributors, selectedDist]
+  )
+
+  const totalGap = useMemo(
+    () => data.reduce((sum, d) => sum + (d.gap || 0), 0),
+    [data]
+  )
 
   useEffect(() => {
     api('/api/sales/skus')
@@ -18,20 +30,28 @@ export default function SellInSellOutChart() {
   }, [])
 
   useEffect(() => {
+    api('/api/distributors')
+      .then(r => r.json())
+      .then(d => Array.isArray(d) && setDistributors(d))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
     const params = new URLSearchParams({ period })
     if (selectedSku) params.set('sku_id', selectedSku)
+    if (selectedDist) params.set('distributor_id', selectedDist)
 
     api(`/api/sales?${params}`)
       .then(r => r.json())
       .then(d => Array.isArray(d) && setData(d))
       .catch(() => {})
-  }, [period, selectedSku])
+  }, [period, selectedSku, selectedDist])
 
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
-          Sell-In vs Sell-Out Gap
+          Sell-In vs Sell-Out Gap{distName ? ` — ${distName}` : ''}
         </h3>
         <div className="flex gap-2">
           <select
@@ -41,6 +61,16 @@ export default function SellInSellOutChart() {
           >
             <option value="monthly">Bulanan</option>
             <option value="quarterly">Kuartal</option>
+          </select>
+          <select
+            value={selectedDist}
+            onChange={e => setSelectedDist(e.target.value)}
+            className="text-sm border rounded px-2 py-1"
+          >
+            <option value="">Semua Distributor</option>
+            {distributors.map(d => (
+              <option key={d.id} value={d.id}>{d.name}</option>
+            ))}
           </select>
           <select
             value={selectedSku}
@@ -60,29 +90,46 @@ export default function SellInSellOutChart() {
           Memuat data...
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="period" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="sell_in"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              name="Sell-In (ke Distributor)"
-            />
-            <Line
-              type="monotone"
-              dataKey="sell_out"
-              stroke="#22c55e"
-              strokeWidth={2}
-              name="Sell-Out (ke Toko)"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="period" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Legend />
+              <Area
+                type="monotone"
+                dataKey="gap"
+                stroke="#ef4444"
+                fill="#fecaca"
+                strokeWidth={2}
+                name="Gap (Sell-In - Sell-Out)"
+              />
+              <Line
+                type="monotone"
+                dataKey="sell_in"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                name="Sell-In (ke Distributor)"
+              />
+              <Line
+                type="monotone"
+                dataKey="sell_out"
+                stroke="#22c55e"
+                strokeWidth={2}
+                name="Sell-Out (ke Toko)"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+          <div className="mt-3 text-sm text-gray-600 text-right">
+            Total Gap:{' '}
+            <span className="font-semibold">
+              {totalGap.toLocaleString('id-ID')}
+            </span>{' '}
+            unit
+          </div>
+        </>
       )}
     </div>
   )
