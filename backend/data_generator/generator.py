@@ -44,7 +44,7 @@ SEED_DATA_SKU: List[dict] = [
 DAYS_TO_GENERATE = 7
 ORIGIN_DATE = date(2026, 1, 1)
 BASE_SELL_IN_RANGE = (80, 120)
-BASE_SELL_OUT_RANGE = (70, 110)
+BASE_SELL_OUT_RANGE = (80, 120)
 BASE_STOCK_RANGE = (500, 1500)
 
 
@@ -133,15 +133,26 @@ async def generate_data(scenario_class: Type, scenario_label: str) -> int:
                     # Apply context-aware adjustment from active tactics
                     for tactic in active_tactics:
                         if (tactic.distributor_id == distributor.id
-                                and tactic.sku_id == sku.id
-                                and tactic.expected_metric == "sell_in"
-                                and tactic.expected_direction == "decrease"):
-                            sell_in = int(sell_in * (1 - (tactic.expected_change_pct or 0) * 0.7))
-                        if (tactic.distributor_id == distributor.id
-                                and tactic.sku_id == sku.id
-                                and tactic.expected_metric == "inventory"
-                                and tactic.expected_direction == "increase"):
-                            sell_in = int(sell_in * 1.3)
+                                and tactic.sku_id == sku.id):
+                            pct = tactic.expected_change_pct or 0
+                            if tactic.expected_metric == "sell_in":
+                                if tactic.expected_direction == "decrease":
+                                    sell_in = int(sell_in * (1 - pct * 0.7))
+                                elif tactic.expected_direction == "increase":
+                                    sell_in = int(sell_in * (1 + pct))
+                            elif tactic.expected_metric == "sell_out":
+                                if tactic.expected_direction == "decrease":
+                                    sell_out = int(sell_out * (1 - pct))
+                                elif tactic.expected_direction == "increase":
+                                    sell_out = int(sell_out * (1 + pct))
+                            elif tactic.expected_metric == "inventory":
+                                if tactic.expected_direction == "decrease":
+                                    sell_in = int(sell_in * (1 - pct * 0.7))
+                                elif tactic.expected_direction == "increase":
+                                    sell_in = int(sell_in * (1 + pct * 0.7))
+                            elif tactic.expected_metric == "gap":
+                                if tactic.expected_direction == "decrease":
+                                    sell_in = int(sell_in * (1 - pct * 0.5))
 
                     running_inventory = running_inventory + sell_in - sell_out
                     running_inventory = max(running_inventory, 0)

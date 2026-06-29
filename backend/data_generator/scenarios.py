@@ -42,7 +42,7 @@ class NormalScenario:
 
     @staticmethod
     def generate_inventory(base_stock: int, day_index: int) -> int:
-        return int(base_stock * random.uniform(0.8, 1.0))
+        return base_stock
 
     @staticmethod
     def generate_params(day_index: int) -> dict:
@@ -98,7 +98,7 @@ class ChannelStuffingScenario:
 
     @staticmethod
     def generate_inventory(base_stock: int, day_index: int) -> int:
-        return int(base_stock * random.uniform(0.8, 1.0))
+        return base_stock
 
     @staticmethod
     def generate_params(day_index: int) -> dict:
@@ -176,7 +176,7 @@ class StockoutScenario:
 
     @staticmethod
     def generate_inventory(base_stock: int, day_index: int) -> int:
-        return int(base_stock * random.uniform(0.8, 1.0))
+        return base_stock
 
     @staticmethod
     def generate_params(day_index: int) -> dict:

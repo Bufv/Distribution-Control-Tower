@@ -18,14 +18,11 @@ logger = logging.getLogger(__name__)
 async def run_verification_cycle(db: AsyncSession) -> int:
     """Check all executed tactics whose verification window has passed."""
 
-    cutoff = datetime.utcnow() - timedelta(days=365)
-
     result = await db.execute(
         select(Tactic).where(
             Tactic.status == 'executed',
             Tactic.verification_status.is_(None),
             Tactic.executed_at.isnot(None),
-            Tactic.executed_at < cutoff,
         )
     )
     tactics = result.scalars().all()
